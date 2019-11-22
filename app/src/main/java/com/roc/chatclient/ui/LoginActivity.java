@@ -23,11 +23,15 @@ import com.roc.chatclient.model.LoginInfo;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
+import com.roc.chatclient.util.CommonUtils;
 
 public class LoginActivity extends AppCompatActivity {
     private String Tag = "LoginActivity";
 
     private ReceiveMsgReceiver msgReceiver;
+
+    private ProgressBar progressBar;
+    private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void btnLoginClick(View view) {
-        final Button btnLogin = findViewById(R.id.login);
-        ProgressBar progressBar = findViewById(R.id.loading);
         progressBar.setVisibility(View.VISIBLE);
         btnLogin.setEnabled(false);
 
@@ -57,9 +59,15 @@ public class LoginActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
+    public void btnWentiClick(View view) {
+        CommonUtils.showLongToast(getString(R.string.login_txt_answer));
+    }
+
     private void init() {
         EditText password = findViewById(R.id.password);
-        final Button btnLogin = findViewById(R.id.login);
+        btnLogin = findViewById(R.id.login);
+        progressBar = findViewById(R.id.loading);
+
         password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -80,14 +88,16 @@ public class LoginActivity extends AppCompatActivity {
         msgReceiver = new ReceiveMsgReceiver(new IMsgCallback() {
             @Override
             public void HandleMsg(CmdInfo info, String msg) {
-                Log.i(Tag, "success:" + msg);
-                Toast.makeText(getBaseContext(), info.Data.toString(), Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.GONE);
+                btnLogin.setEnabled(true);
+                CommonUtils.showLongToast(info.getDataJson());
             }
 
             @Override
             public void HandleError(CmdInfo info, String msg) {
-                Log.e(Tag, "error:" + msg);
-                Toast.makeText(getBaseContext(), info.Data.toString(), Toast.LENGTH_LONG).show();
+                progressBar.setVisibility(View.GONE);
+                btnLogin.setEnabled(true);
+                CommonUtils.showLongToast(info.Data.toString());
             }
         });
 

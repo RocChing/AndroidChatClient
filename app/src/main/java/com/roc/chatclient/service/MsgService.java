@@ -29,7 +29,8 @@ public class MsgService extends Service {
     private NioClient client;
 
     private String Tag = "MsgService";
-    private String ip = "192.168.22.146";
+    //    private String ip = "192.168.22.146";
+    private String ip = "192.168.150.141";
     private int port = 8800;
 
     private SendMsgReceiver msgReceiver;
