@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
+import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.model.LoginInfo;
@@ -24,6 +25,7 @@ import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
 import com.roc.chatclient.util.CommonUtils;
+import com.roc.chatclient.util.PreferenceManager;
 
 public class LoginActivity extends AppCompatActivity {
     private String Tag = "LoginActivity";
@@ -39,6 +41,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         init();
+
+        PreferenceManager preferenceManager = PreferenceManager.getInstance();
+        Log.d(Tag, "get user name from preferenceManager is :" + preferenceManager.getCurrentUsername());
     }
 
     public void btnLoginClick(View view) {
@@ -91,6 +96,10 @@ public class LoginActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.GONE);
                 btnLogin.setEnabled(true);
                 //CommonUtils.showLongToast(info.getDataJson());
+                PreferenceManager preferenceManager = PreferenceManager.getInstance();
+                User user = info.of(User.class);
+                preferenceManager.setCurrentUser(user);
+
                 Intent intent = new Intent(getBaseContext(), HomeActivity.class);
                 startActivity(intent);
                 finish();

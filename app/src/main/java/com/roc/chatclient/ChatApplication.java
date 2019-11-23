@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.util.Log;
 
+import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.service.MsgService;
 
 public class ChatApplication extends Application {
@@ -17,6 +18,8 @@ public class ChatApplication extends Application {
 
         Intent intent = new Intent(this, MsgService.class);
         startService(intent);
+
+        ChatHelper.getInstance().init(this);
     }
 
     public static ChatApplication getInstance() {

@@ -1,51 +1,28 @@
 package com.roc.chatclient.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import com.roc.chatclient.R;
-
-import com.roc.chatclient.widget.EaseTitleBar;
 
 public abstract class BaseFragment extends Fragment {
-    protected EaseTitleBar titleBar;
-    protected InputMethodManager inputMethodManager;
-
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        titleBar = getView().findViewById(R.id.title_bar);
-
-        initView();
-        setUpView();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        int rootLayoutId = getRootLayoutId();
+        View rootView = inflater.inflate(rootLayoutId, container, false);
+        initView(rootView);
+        initData(rootView);
+        setListener(rootView);
+        return rootView;
     }
 
-    public void showTitleBar(){
-        if(titleBar != null){
-            titleBar.setVisibility(View.VISIBLE);
-        }
-    }
+    public abstract int getRootLayoutId();
 
-    public void hideTitleBar(){
-        if(titleBar != null){
-            titleBar.setVisibility(View.GONE);
-        }
-    }
+    protected abstract void initView(View view);
 
-    protected void hideSoftKeyboard() {
-        if (getActivity().getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-            if (getActivity().getCurrentFocus() != null)
-                inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
+    protected abstract void initData(View view);
 
-    protected abstract void initView();
-
-    protected abstract void setUpView();
+    protected abstract void setListener(View view);
 }

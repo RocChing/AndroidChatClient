@@ -28,6 +28,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'com.android.support:appcompat-v7:29.0.0'
     implementation 'com.android.support:percent:29.0.0'
+    implementation 'de.hdodenhof:circleimageview:2.0.0'
     implementation 'com.alibaba:fastjson:1.2.61'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
