@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.HomeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/layout_title"
+            layout="@layout/view_layout_title" />
+
+        <com.roc.chatclient.widget.MFViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/layout_title"
+            android:paddingBottom="48dp">
+
+        </com.roc.chatclient.widget.MFViewPager>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#ffffff"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#D6DCDC" />
+
+            <com.roc.chatclient.widget.DMTabHost
+                android:id="@+id/tab_host"
+                android:layout_width="match_parent"
+                android:layout_height="47dip"
+                android:orientation="horizontal"
+                android:paddingBottom="1dp">
+
+                <com.roc.chatclient.widget.DMTabButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:drawableTop="@drawable/tab_weixin"
+                    app:tabtext="@string/app_name">
+
+                </com.roc.chatclient.widget.DMTabButton>
+
+                <com.roc.chatclient.widget.DMTabButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:drawableTop="@drawable/tab_contact_list"
+                    app:tabtext="@string/contacts">
+
+                </com.roc.chatclient.widget.DMTabButton>
+
+                <com.roc.chatclient.widget.DMTabButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:drawableTop="@drawable/tab_find"
+                    app:tabtext="@string/discover">
+
+                </com.roc.chatclient.widget.DMTabButton>
+
+                <com.roc.chatclient.widget.DMTabButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:drawableTop="@drawable/tab_profile"
+                    app:tabtext="@string/me">
+
+                </com.roc.chatclient.widget.DMTabButton>
+
+            </com.roc.chatclient.widget.DMTabHost>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

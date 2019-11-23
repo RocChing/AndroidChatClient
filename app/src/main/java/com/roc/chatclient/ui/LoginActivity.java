@@ -90,7 +90,10 @@ public class LoginActivity extends AppCompatActivity {
             public void HandleMsg(CmdInfo info, String msg) {
                 progressBar.setVisibility(View.GONE);
                 btnLogin.setEnabled(true);
-                CommonUtils.showLongToast(info.getDataJson());
+                //CommonUtils.showLongToast(info.getDataJson());
+                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                startActivity(intent);
+                finish();
             }
 
             @Override
