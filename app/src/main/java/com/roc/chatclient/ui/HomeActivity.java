@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.roc.chatclient.R;
 import com.roc.chatclient.adapter.MainTabAdpter;
 import com.roc.chatclient.db.InviteMessgeDao;
+import com.roc.chatclient.ui.fragment.ContactListFragment;
 import com.roc.chatclient.ui.fragment.ConversationListFragment;
 import com.roc.chatclient.ui.fragment.Fragment_Dicover;
 import com.roc.chatclient.ui.fragment.Fragment_Profile;
@@ -60,7 +61,7 @@ public class HomeActivity extends AppCompatActivity implements DMTabHost.OnCheck
 
         adapter.addFragment(new ConversationListFragment(), getString(R.string.app_name));
         //adapter.addFragment(new ContactListFragment(), getString(R.string.contacts));
-        adapter.addFragment(new Fragment_Dicover(), getString(R.string.contacts));
+        adapter.addFragment(new ContactListFragment(), getString(R.string.contacts));
         adapter.addFragment(new Fragment_Dicover(), getString(R.string.discover));
         adapter.addFragment(new Fragment_Profile(), getString(R.string.me));
         adapter.notifyDataSetChanged();

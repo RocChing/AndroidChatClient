@@ -22,4 +22,12 @@ public class Constant {
     public static final String MESSAGE_ATTR_ROBOT_MSGTYPE = "msgtype";
     public static final String ACTION_GROUP_CHANAGED = "action_group_changed";
     public static final String ACTION_CONTACT_CHANAGED = "action_contact_changed";
+
+    public static final String DATA = "DATA";
+    public static final String VALUES = "VALUES";
+    public static final String DESC = "DESC";
+    public static final String NAME = "NAME";
+    public static final String PWD = "PWD";
+    public static final String TITLE = "TITLE";
+    public static final String URL = "URL";
 }

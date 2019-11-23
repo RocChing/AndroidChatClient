@@ -27,6 +27,11 @@
 
         <activity android:name=".ui.LoginActivity" />
 
+        <activity
+            android:name=".ui.CommonActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
         <service
             android:name=".service.MsgService"
             android:enabled="true"

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.roc.chatclient.R;
+import com.roc.chatclient.model.Constant;
+import com.roc.chatclient.ui.CommonActivity;
 
 /**
  * Description :页面跳转
@@ -31,6 +33,16 @@ public class MFGT {
         activity.finish();
         activity.overridePendingTransition(R.anim.push_bottom_in,
                 R.anim.push_bottom_out);
+    }
+
+    public static void gotoCommon(Activity context, String title) {
+        Intent intent = new Intent();
+        intent.setClass(context, CommonActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        intent.putExtra(Constant.TITLE, title);
+        context.startActivity(intent);
+        context.overridePendingTransition(R.anim.push_left_in,
+                R.anim.push_left_out);
     }
 
 //    /**

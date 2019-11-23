@@ -9,9 +9,11 @@ import com.roc.chatclient.entity.User;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
+import java.util.Hashtable;
 import java.util.Map;
 
 public class ChatHelper {
+
     protected static final String TAG = "ChatHelper";
     private Map<String, User> contactList;
 
@@ -32,6 +34,18 @@ public class ChatHelper {
     //private CallReceiver callReceiver;
 
     private ChatHelper() {
+    }
+
+    /**
+     * data sync listener
+     */
+    static public interface DataSyncListener {
+        /**
+         * sync complete
+         *
+         * @param success true：data sync successful，false: failed to sync data
+         */
+        public void onSyncComplete(boolean success);
     }
 
     public synchronized static ChatHelper getInstance() {
@@ -80,6 +94,24 @@ public class ChatHelper {
     public boolean isLogin() {
         String name = PreferenceManager.getInstance().getCurrentUsername();
         return !StringUtils.isEmpty(name);
+    }
+
+    /**
+     * get contact list
+     *
+     * @return
+     */
+    public Map<String, User> getContactList() {
+        if (isLogin() && contactList == null) {
+            contactList = demoModel.getContactList();
+        }
+
+        // return a empty non-null object to avoid app crash
+        if (contactList == null) {
+            return new Hashtable<String, User>();
+        }
+
+        return contactList;
     }
 
 
