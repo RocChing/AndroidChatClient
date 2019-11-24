@@ -8,9 +8,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <include layout="@layout/view_layout_title"/>
+        <include layout="@layout/view_layout_title" />
 
         <include
             android:id="@+id/search_bar_view"
@@ -19,8 +20,19 @@
         <LinearLayout
             android:id="@+id/layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
+            <FrameLayout
+                android:id="@+id/content_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.roc.chatclient.widget.EaseContactList
+                    android:id="@+id/contact_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+        </LinearLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

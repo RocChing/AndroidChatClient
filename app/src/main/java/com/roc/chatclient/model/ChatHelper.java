@@ -26,18 +26,13 @@ public class ChatHelper {
     private Map<String, UserExtInfo> contactList;
 
 //    private Map<String, RobotUser> robotList;
-
 //    private UserProfileManager userProManager;
 
     private static ChatHelper instance = null;
 
     private ChatModel demoModel = null;
-    private String username;
-
     private Context appContext;
 
-    private InviteMessgeDao inviteMessgeDao;
-    private UserDao userDao;
     private ReceiveMsgReceiver msgReceiver;
 
     //private CallReceiver callReceiver;
@@ -68,7 +63,6 @@ public class ChatHelper {
         appContext = context;
         initReceiver();
         demoModel = new ChatModel(context);
-        initDbDao();
     }
 
     private void initReceiver() {
@@ -81,33 +75,15 @@ public class ChatHelper {
         msgReceiver.setMsgCallback(msgCallback);
     }
 
-    private void initDbDao() {
-        inviteMessgeDao = new InviteMessgeDao(appContext);
-        userDao = new UserDao(appContext);
-    }
-
     public ChatModel getModel() {
         return demoModel;
-    }
-
-    /**
-     * set current username
-     *
-     * @param username
-     */
-    public void setCurrentUserName(String username) {
-        this.username = username;
-        demoModel.setCurrentUserName(username);
     }
 
     /**
      * get current user's id
      */
     public String getCurrentUsernName() {
-        if (username == null) {
-            username = demoModel.getCurrentUsernName();
-        }
-        return username;
+        return demoModel.getCurrentUsernName();
     }
 
     public boolean isLogin() {
@@ -133,6 +109,12 @@ public class ChatHelper {
         return contactList;
     }
 
+    public synchronized void resetData() {
+        DbManager.getInstance().closeDB();//切换数据库
+        PreferenceManager.getInstance().removeCurrentUserInfo();//移除用户信息
+
+        contactList = null;
+    }
 
     synchronized void reset() {
 //        isSyncingGroupsWithServer = false;
@@ -154,5 +136,6 @@ public class ChatHelper {
 //        setRobotList(null);
 //        getUserProfileManager().reset();
         DbManager.getInstance().closeDB();
+        instance = null;
     }
 }

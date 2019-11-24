@@ -68,7 +68,7 @@ public class UserDao {
 	 * save a contact
 	 * @param user
 	 */
-	public void saveContact(User user){
+	public void saveContact(UserExtInfo user){
 	    DbManager.getInstance().saveContact(user);
 	}
 	

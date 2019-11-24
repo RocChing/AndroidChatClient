@@ -101,7 +101,7 @@ public class DbManager {
      *
      * @param user
      */
-    synchronized public void saveContact(User user) {
+    synchronized public void saveContact(UserExtInfo user) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(UserDao.COLUMN_NAME_ID, user.Name);

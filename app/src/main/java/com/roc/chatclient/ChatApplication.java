@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.service.MsgService;
+import com.roc.chatclient.util.FinishActivityManager;
 
 public class ChatApplication extends Application {
 

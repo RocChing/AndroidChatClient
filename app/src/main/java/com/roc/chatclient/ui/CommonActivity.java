@@ -18,7 +18,7 @@ import com.roc.chatclient.R;
  * Author : AllenJuns
  * Date   : 2016-3-08
  */
-public class CommonActivity extends AppCompatActivity {
+public class CommonActivity extends BaseActivity {
 
     private TextView txt_title;
     private ImageView img_back;

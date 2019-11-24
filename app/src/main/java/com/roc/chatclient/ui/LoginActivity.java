@@ -22,6 +22,7 @@ import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.model.LoginInfo;
+import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
@@ -98,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                 btnLogin.setEnabled(true);
                 //CommonUtils.showLongToast(info.getDataJson());
                 PreferenceManager preferenceManager = PreferenceManager.getInstance();
-                User user = info.of(User.class);
+                UserExtInfo user = info.of(UserExtInfo.class);
                 preferenceManager.setCurrentUser(user);
 
                 Intent intent = new Intent(getBaseContext(), HomeActivity.class);

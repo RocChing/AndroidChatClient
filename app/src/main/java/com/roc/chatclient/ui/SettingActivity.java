@@ -8,9 +8,12 @@ import android.view.View;
 
 import com.roc.chatclient.MainActivity;
 import com.roc.chatclient.R;
+import com.roc.chatclient.db.DbManager;
+import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.util.FinishActivityManager;
 import com.roc.chatclient.util.PreferenceManager;
 
-public class SettingActivity extends AppCompatActivity {
+public class SettingActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +22,10 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     public void btnExitClick(View view) {
-        PreferenceManager.getInstance().removeCurrentUserInfo();
+        ChatHelper.getInstance().resetData();
+
         Intent intent = new Intent(this, MainActivity.class);
+        FinishActivityManager.getManager().finishAllActivity();
         startActivity(intent);
         finish();
     }

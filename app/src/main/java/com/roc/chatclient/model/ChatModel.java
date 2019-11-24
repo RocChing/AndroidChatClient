@@ -19,31 +19,28 @@ public class ChatModel {
     public ChatModel(Context ctx) {
         context = ctx;
         PreferenceManager.init(context);
+        dao = new UserDao(ctx);
     }
 
     public boolean saveContactList(List<User> contactList) {
-        UserDao dao = new UserDao(context);
         dao.saveContactList(contactList);
         return true;
     }
 
     public Map<String, UserExtInfo> getContactList() {
-        UserDao dao = new UserDao(context);
         return dao.getContactList();
     }
 
-    public void saveContact(User user) {
-        UserDao dao = new UserDao(context);
-        dao.saveContact(user);
-    }
+    public boolean saveContact(UserExtInfo user) {
+        UserExtInfo current = PreferenceManager.getInstance().getCurrentUser();
+        if (current.Name.equalsIgnoreCase(user.Name)) return false;
 
-    /**
-     * save current username
-     *
-     * @param username
-     */
-    public void setCurrentUserName(String username) {
-        PreferenceManager.getInstance().setCurrentUserName(username);
+        try {
+            dao.saveContact(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String getCurrentUsernName() {
@@ -150,10 +147,6 @@ public class ChatModel {
     public List<String> getDisabledGroups() {
         Object val = valueCache.get(Key.DisabledGroups);
 
-        if (dao == null) {
-            dao = new UserDao(context);
-        }
-
         if (val == null) {
             val = dao.getDisabledGroups();
             valueCache.put(Key.DisabledGroups, val);
@@ -163,20 +156,12 @@ public class ChatModel {
     }
 
     public void setDisabledIds(List<String> ids) {
-        if (dao == null) {
-            dao = new UserDao(context);
-        }
-
         dao.setDisabledIds(ids);
         valueCache.put(Key.DisabledIds, ids);
     }
 
     public List<String> getDisabledIds() {
         Object val = valueCache.get(Key.DisabledIds);
-
-        if (dao == null) {
-            dao = new UserDao(context);
-        }
 
         if (val == null) {
             val = dao.getDisabledIds();

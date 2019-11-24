@@ -17,6 +17,7 @@ import com.roc.chatclient.widget.MFViewPager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,7 +26,7 @@ import android.widget.TextView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HomeActivity extends AppCompatActivity implements DMTabHost.OnCheckedChangeListener, ViewPager.OnPageChangeListener {
+public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedChangeListener, ViewPager.OnPageChangeListener {
 
     private MainTabAdpter adapter;
     private int keyBackClickCount = 0;
@@ -60,7 +61,6 @@ public class HomeActivity extends AppCompatActivity implements DMTabHost.OnCheck
 //        viewpager.setScrollble(false);
 
         adapter.addFragment(new ConversationListFragment(), getString(R.string.app_name));
-        //adapter.addFragment(new ContactListFragment(), getString(R.string.contacts));
         adapter.addFragment(new ContactListFragment(), getString(R.string.contacts));
         adapter.addFragment(new Fragment_Dicover(), getString(R.string.discover));
         adapter.addFragment(new Fragment_Profile(), getString(R.string.me));
@@ -72,6 +72,16 @@ public class HomeActivity extends AppCompatActivity implements DMTabHost.OnCheck
 
         img_right.setVisibility(View.VISIBLE);
         img_right.setImageResource(R.drawable.icon_add);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (PageIndex == 2) {
+            ContactListFragment fragment = (ContactListFragment) adapter.getItem(PageIndex);
+            fragment.refresh();
+        }
     }
 
     @Override

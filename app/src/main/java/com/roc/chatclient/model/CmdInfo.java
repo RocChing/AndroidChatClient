@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.roc.chatclient.util.StringUtils;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class CmdInfo {
     public int Type;
@@ -34,6 +35,11 @@ public class CmdInfo {
     public <T> T of(Class<T> tClass) {
         String json = getDataJson();
         return JSON.parseObject(json, tClass);
+    }
+
+    public <T> List<T> ofList(Class<T> tClass) {
+        String json = getDataJson();
+        return JSON.parseArray(json, tClass);
     }
 
     public boolean isValid(String validString) {

@@ -15,6 +15,7 @@ package com.roc.chatclient.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.entity.User;
@@ -198,10 +199,12 @@ public class PreferenceManager {
     }
 
     public String getCurrentUsername() {
-        return mSharedPreferences.getString(SHARED_KEY_CURRENTUSER_USERNAME, null);
+        String name = mSharedPreferences.getString(SHARED_KEY_CURRENTUSER_USERNAME, null);
+        Log.d("PreferenceManager", "the name from source is: " + name);
+        return name;
     }
 
-    public void setCurrentUser(User user) {
+    public void setCurrentUser(UserExtInfo user) {
         if (user == null) return;
         String json = JSON.toJSONString(user);
         editor.putString(SHARED_KEY_CURRENTUSER_USERNAME, user.Name);

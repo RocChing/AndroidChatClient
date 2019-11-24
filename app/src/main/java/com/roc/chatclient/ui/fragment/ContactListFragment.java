@@ -84,14 +84,14 @@ public class ContactListFragment extends EaseContactListFragment {
         }
         setContactsMap(m);
         super.refresh();
-        if (inviteMessgeDao == null) {
-            inviteMessgeDao = new InviteMessgeDao(getActivity());
-        }
-        if (inviteMessgeDao.getUnreadMessagesCount() > 0) {
-            applicationItem.showUnreadMsgView();
-        } else {
-            applicationItem.hideUnreadMsgView();
-        }
+//        if (inviteMessgeDao == null) {
+//            inviteMessgeDao = new InviteMessgeDao(getActivity());
+//        }
+//        if (inviteMessgeDao.getUnreadMessagesCount() > 0) {
+//            applicationItem.showUnreadMsgView();
+//        } else {
+//            applicationItem.hideUnreadMsgView();
+//        }
     }
 
 

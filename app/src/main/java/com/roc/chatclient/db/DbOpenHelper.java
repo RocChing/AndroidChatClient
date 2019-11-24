@@ -16,12 +16,16 @@ package com.roc.chatclient.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.util.StringUtils;
 
 public class DbOpenHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 6;
     private static DbOpenHelper instance;
+    private static String Tag = "DbOpenHelper";
 
     private static final String USERNAME_TABLE_CREATE = "CREATE TABLE "
             + UserDao.TABLE_NAME + " ("
@@ -65,7 +69,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     }
 
     private static String getUserDatabaseName() {
-        return ChatHelper.getInstance().getCurrentUsernName() + "_demo.db";
+        String name = ChatHelper.getInstance().getCurrentUsernName() + "_demo.db";
+        Log.d(Tag, "the db name is:" + name);
+        return name;
     }
 
     @Override
@@ -74,7 +80,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL(INIVTE_MESSAGE_TABLE_CREATE);
         db.execSQL(CREATE_PREF_TABLE);
         db.execSQL(ROBOT_TABLE_CREATE);
-
     }
 
     @Override
