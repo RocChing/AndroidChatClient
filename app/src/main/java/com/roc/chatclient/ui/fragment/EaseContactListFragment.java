@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.widget.EaseContactList;
 
@@ -50,21 +51,20 @@ import java.util.Map.Entry;
  */
 public class EaseContactListFragment extends EaseBaseFragment {
     private static final String TAG = "EaseContactListFragment";
-    protected List<User> contactList;
+    protected List<UserExtInfo> contactList;
     protected ListView listView;
     protected boolean hidden;
     protected ImageButton clearSearch;
     protected EditText query;
     protected Handler handler = new Handler();
-    protected User toBeProcessUser;
+    protected UserExtInfo toBeProcessUser;
     protected String toBeProcessUsername;
     protected EaseContactList contactListLayout;
     protected boolean isConflict;
     protected FrameLayout contentContainer;
     protected View search_bar_view;
 
-    private Map<String, User> contactsMap;
-
+    private Map<String, UserExtInfo> contactsMap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,7 +96,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
     protected void setUpView() {
 //        EMClient.getInstance().addConnectionListener(connectionListener);
 
-        contactList = new ArrayList<User>();
+        contactList = new ArrayList<UserExtInfo>();
         getContactList();
         //init list
         contactListLayout.init(contactList);
@@ -106,7 +106,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    User user = (User) listView.getItemAtPosition(position);
+                    UserExtInfo user = (UserExtInfo) listView.getItemAtPosition(position);
                     listItemClickListener.onListItemClicked(user);
                 }
             });
@@ -146,7 +146,6 @@ public class EaseContactListFragment extends EaseBaseFragment {
                 return false;
             }
         });
-
     }
 
 
@@ -187,7 +186,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();
-                            Toast.makeText(getActivity(), st2, 0).show();
+                            Toast.makeText(getActivity(), st2, Toast.LENGTH_LONG).show();
                             refresh();
                         }
                     });
@@ -196,7 +195,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();
-                            Toast.makeText(getActivity(), st3, 0).show();
+                            Toast.makeText(getActivity(), st3, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -230,16 +229,16 @@ public class EaseContactListFragment extends EaseBaseFragment {
             return;
         }
         synchronized (this.contactsMap) {
-            Iterator<Entry<String, User>> iterator = contactsMap.entrySet().iterator();
+            Iterator<Entry<String, UserExtInfo>> iterator = contactsMap.entrySet().iterator();
             List<String> blackList = null; //EMClient.getInstance().contactManager().getBlackListUsernames();
             while (iterator.hasNext()) {
-                Entry<String, User> entry = iterator.next();
+                Entry<String, UserExtInfo> entry = iterator.next();
                 // to make it compatible with data in previous version, you can remove this check if this is new app
                 if (!entry.getKey().equals("item_new_friends")
                         && !entry.getKey().equals("item_groups")
                         && !entry.getKey().equals("item_chatroom")
                         && !entry.getKey().equals("item_robots")) {
-                    User user = entry.getValue();
+                    UserExtInfo user = entry.getValue();
                     CommonUtils.setUserInitialLetter(user);
                     contactList.add(user);
 //                    if (blackList != null && !blackList.contains(entry.getKey())) {
@@ -253,10 +252,9 @@ public class EaseContactListFragment extends EaseBaseFragment {
         }
 
         // sorting
-        Collections.sort(contactList, new Comparator<User>() {
-
+        Collections.sort(contactList, new Comparator<UserExtInfo>() {
             @Override
-            public int compare(User lhs, User rhs) {
+            public int compare(UserExtInfo lhs, UserExtInfo rhs) {
                 if (lhs.getInitialLetter().equals(rhs.getInitialLetter())) {
                     return lhs.NickName.compareTo(rhs.NickName);
                 } else {
@@ -317,7 +315,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
      *
      * @param contactsMap
      */
-    public void setContactsMap(Map<String, User> contactsMap) {
+    public void setContactsMap(Map<String, UserExtInfo> contactsMap) {
         this.contactsMap = contactsMap;
     }
 
@@ -327,7 +325,7 @@ public class EaseContactListFragment extends EaseBaseFragment {
          *
          * @param user --the user of item
          */
-        void onListItemClicked(User user);
+        void onListItemClicked(UserExtInfo user);
     }
 
     /**
@@ -338,5 +336,4 @@ public class EaseContactListFragment extends EaseBaseFragment {
     public void setContactListItemClickListener(EaseContactListItemClickListener listItemClickListener) {
         this.listItemClickListener = listItemClickListener;
     }
-
 }

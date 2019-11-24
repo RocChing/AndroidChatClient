@@ -32,6 +32,8 @@ import com.roc.chatclient.db.InviteMessgeDao;
 import com.roc.chatclient.db.UserDao;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.ui.NewFriendsMsgActivity;
 import com.roc.chatclient.util.MFGT;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.ContactItemView;
@@ -60,7 +62,7 @@ public class ContactListFragment extends EaseContactListFragment {
         super.initView();
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.em_contacts_header, null);
         HeaderItemClickListener clickListener = new HeaderItemClickListener();
-        search_bar_view.setVisibility(View.GONE);
+        search_bar_view.setVisibility(View.VISIBLE);
         applicationItem = (ContactItemView) headerView.findViewById(R.id.application_item);
         applicationItem.setOnClickListener(clickListener);
         headerView.findViewById(R.id.txt_search).setOnClickListener(clickListener);
@@ -76,9 +78,9 @@ public class ContactListFragment extends EaseContactListFragment {
 
     @Override
     public void refresh() {
-        Map<String, User> m = ChatHelper.getInstance().getContactList();
+        Map<String, UserExtInfo> m = ChatHelper.getInstance().getContactList();
         if (m instanceof Hashtable<?, ?>) {
-            m = (Map<String, User>) ((Hashtable<String, User>) m).clone();
+            m = (Map<String, UserExtInfo>) ((Hashtable<String, UserExtInfo>) m).clone();
         }
         setContactsMap(m);
         super.refresh();
@@ -98,12 +100,12 @@ public class ContactListFragment extends EaseContactListFragment {
     protected void setUpView() {
         //设置联系人数据
         //getMe(); // TODO del
-        Map<String, User> m = ChatHelper.getInstance().getContactList();
+        Map<String, UserExtInfo> m = ChatHelper.getInstance().getContactList();
 
         addMe(m);
 
         if (m instanceof Hashtable<?, ?>) {
-            m = (Map<String, User>) ((Hashtable<String, User>) m).clone();
+            m = (Map<String, UserExtInfo>) ((Hashtable<String, UserExtInfo>) m).clone();
         }
         setContactsMap(m);
         super.setUpView();
@@ -111,7 +113,7 @@ public class ContactListFragment extends EaseContactListFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String username = ((User) listView.getItemAtPosition(position)).Name;
+                String username = ((UserExtInfo) listView.getItemAtPosition(position)).Name;
                 // demo中直接进入聊天页面，实际一般是进入用户详情页
                 //   startActivity(new Intent(getActivity(), ChatActivity.class).putExtra(EaseConstant.EXTRA_USER_ID, username));
 //                getActivity().overridePendingTransition(R.anim.push_left_in,
@@ -136,13 +138,13 @@ public class ContactListFragment extends EaseContactListFragment {
 //        }
     }
 
-    private void addMe(Map<String, User> map) {
+    private void addMe(Map<String, UserExtInfo> map) {
         // TODO del
 //        EaseUser user = new EaseUser("1245238818");
 //        user.setAvatar("https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2554876210,496793817&fm=58");
 //        user.setNick("张小龙");
 //        ChatHelper.getInstance().getContactList().put("1245238818", user);
-        User user = PreferenceManager.getInstance().getCurrentUser();
+        UserExtInfo user = PreferenceManager.getInstance().getCurrentUser();
         map.put(user.Name, user);
     }
 
@@ -177,8 +179,8 @@ public class ContactListFragment extends EaseContactListFragment {
                     break;
                 case R.id.application_item:
                     // 进入申请与通知页面
-                    // startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
-                    MFGT.gotoCommon(getActivity(), getString(R.string.recommended_friends));
+                    startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
+                    //MFGT.gotoCommon(getActivity(), getString(R.string.recommended_friends));
                     break;
                 case R.id.group_item:
                     // 进入群聊列表页面
@@ -201,7 +203,7 @@ public class ContactListFragment extends EaseContactListFragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        toBeProcessUser = (User) listView.getItemAtPosition(((AdapterContextMenuInfo) menuInfo).position);
+        toBeProcessUser = (UserExtInfo) listView.getItemAtPosition(((AdapterContextMenuInfo) menuInfo).position);
         toBeProcessUsername = toBeProcessUser.Name;
         getActivity().getMenuInflater().inflate(R.menu.em_context_contact_list, menu);
     }
@@ -232,7 +234,7 @@ public class ContactListFragment extends EaseContactListFragment {
      *
      * @param
      */
-    public void deleteContact(final User tobeDeleteUser) {
+    public void deleteContact(final UserExtInfo tobeDeleteUser) {
         String st1 = getResources().getString(R.string.deleting);
         final String st2 = getResources().getString(R.string.Delete_failed);
         final ProgressDialog pd = new ProgressDialog(getActivity());

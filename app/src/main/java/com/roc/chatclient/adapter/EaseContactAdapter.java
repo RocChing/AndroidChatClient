@@ -17,16 +17,17 @@ import android.widget.TextView;
 
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EaseContactAdapter extends ArrayAdapter<User> implements SectionIndexer {
+public class EaseContactAdapter extends ArrayAdapter<UserExtInfo> implements SectionIndexer {
     private static final String TAG = "ContactAdapter";
     List<String> list;
-    List<User> userList;
-    List<User> copyUserList;
+    List<UserExtInfo> userList;
+    List<UserExtInfo> copyUserList;
     private LayoutInflater layoutInflater;
     private SparseIntArray positionOfSection;
     private SparseIntArray sectionOfPosition;
@@ -34,11 +35,11 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
     private MyFilter myFilter;
     private boolean notiyfyByFilter;
 
-    public EaseContactAdapter(Context context, int resource, List<User> objects) {
+    public EaseContactAdapter(Context context, int resource, List<UserExtInfo> objects) {
         super(context, resource, objects);
         this.res = resource;
         this.userList = objects;
-        copyUserList = new ArrayList<User>();
+        copyUserList = new ArrayList<UserExtInfo>();
         copyUserList.addAll(objects);
         layoutInflater = LayoutInflater.from(context);
     }
@@ -66,10 +67,10 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
             holder = (ViewHolder) convertView.getTag();
         }
 
-        User user = getItem(position);
+        UserExtInfo user = getItem(position);
         if (user == null)
             Log.d("ContactAdapter", position + "");
-        String username = user.Name;
+        //String username = user.Name;
         String header = user.getInitialLetter();
 
         if (position == 0 || header != null && !header.equals(getItem(position - 1).getInitialLetter())) {
@@ -101,7 +102,7 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
     }
 
     @Override
-    public User getItem(int position) {
+    public UserExtInfo getItem(int position) {
         return super.getItem(position);
     }
 
@@ -152,9 +153,9 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
     }
 
     protected class MyFilter extends Filter {
-        List<User> mOriginalList = null;
+        List<UserExtInfo> mOriginalList = null;
 
-        public MyFilter(List<User> myList) {
+        public MyFilter(List<UserExtInfo> myList) {
             this.mOriginalList = myList;
         }
 
@@ -162,7 +163,7 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
         protected synchronized FilterResults performFiltering(CharSequence prefix) {
             FilterResults results = new FilterResults();
             if (mOriginalList == null) {
-                mOriginalList = new ArrayList<User>();
+                mOriginalList = new ArrayList<UserExtInfo>();
             }
             Log.d(TAG, "contacts original size: " + mOriginalList.size());
             Log.d(TAG, "contacts copy size: " + copyUserList.size());
@@ -173,9 +174,9 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
             } else {
                 String prefixString = prefix.toString();
                 final int count = mOriginalList.size();
-                final ArrayList<User> newValues = new ArrayList<User>();
+                final ArrayList<UserExtInfo> newValues = new ArrayList<UserExtInfo>();
                 for (int i = 0; i < count; i++) {
-                    final User user = mOriginalList.get(i);
+                    final UserExtInfo user = mOriginalList.get(i);
                     String username = user.Name;
 
                     if (username.startsWith(prefixString)) {
@@ -204,7 +205,7 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
         protected synchronized void publishResults(CharSequence constraint,
                                                    FilterResults results) {
             userList.clear();
-            userList.addAll((List<User>) results.values);
+            userList.addAll((List<UserExtInfo>) results.values);
             Log.d(TAG, "publish contacts filter results size: " + results.count);
             if (results.count > 0) {
                 notiyfyByFilter = true;
@@ -252,7 +253,7 @@ public class EaseContactAdapter extends ArrayAdapter<User> implements SectionInd
         return this;
     }
 
-    private void setUserNick(User user, TextView textView) {
+    private void setUserNick(UserExtInfo user, TextView textView) {
         if (textView != null) {
             if (user != null && !StringUtils.isEmpty(user.NickName)) {
                 textView.setText(user.NickName);

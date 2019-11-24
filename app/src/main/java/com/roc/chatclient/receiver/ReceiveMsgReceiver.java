@@ -36,29 +36,16 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
         CmdInfo info = JSON.parseObject(msg, CmdInfo.class);
         CmdType type = CmdType.getType(info.Type);
         switch (type) {
-            case Login:
+            case Error:
+                if (msgCallback != null) {
+                    msgCallback.HandleError(info, msg);
+                }
+                break;
+            default:
                 if (msgCallback != null) {
                     msgCallback.HandleMsg(info, msg);
                 }
                 break;
-            case Error:
-                if (msgCallback != null) {
-                    Log.d("aaa", "ssssss");
-                    msgCallback.HandleError(info, msg);
-                }
-                break;
         }
-//        switch (action) {
-//            case MsgString.Error:
-//                if (msgCallback != null) {
-//                    msgCallback.HandleError(msg);
-//                }
-//                break;
-//            default:
-//                if (msgCallback != null) {
-//                    msgCallback.HandleMsg(msg);
-//                }
-//                break;
-//        }
     }
 }

@@ -27,7 +27,7 @@ public class ChatModel {
         return true;
     }
 
-    public Map<String, User> getContactList() {
+    public Map<String, UserExtInfo> getContactList() {
         UserDao dao = new UserDao(context);
         return dao.getContactList();
     }

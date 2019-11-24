@@ -17,7 +17,7 @@
         android:paddingLeft="20dp"
         android:singleLine="true"
         android:text="@string/search"
-        android:textColor="@color/black2" />
+        android:textColor="@color/black2" android:visibility="gone" />
 
     <com.roc.chatclient.widget.ContactItemView
         android:id="@+id/application_item"

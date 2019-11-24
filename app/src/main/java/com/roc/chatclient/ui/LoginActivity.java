@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.model.LoginInfo;
@@ -30,7 +31,7 @@ import com.roc.chatclient.util.PreferenceManager;
 public class LoginActivity extends AppCompatActivity {
     private String Tag = "LoginActivity";
 
-    private ReceiveMsgReceiver msgReceiver;
+    //private ReceiveMsgReceiver msgReceiver;
 
     private ProgressBar progressBar;
     private Button btnLogin;
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        msgReceiver = new ReceiveMsgReceiver(new IMsgCallback() {
+        ChatHelper.getInstance().setMsgCallback(new IMsgCallback() {
             @Override
             public void HandleMsg(CmdInfo info, String msg) {
                 progressBar.setVisibility(View.GONE);
@@ -112,17 +113,10 @@ public class LoginActivity extends AppCompatActivity {
                 CommonUtils.showLongToast(info.Data.toString());
             }
         });
-
-        IntentFilter filter = new IntentFilter(MsgString.ReceiveMsg);
-        LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, filter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (msgReceiver != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(msgReceiver);
-        }
     }
 }

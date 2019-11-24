@@ -15,6 +15,7 @@ package com.roc.chatclient.db;
 
 import android.content.Context;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.model.UserExtInfo;
 
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class UserDao {
 	 * 
 	 * @return
 	 */
-	public Map<String, User> getContactList() {
+	public Map<String, UserExtInfo> getContactList() {
 	    return DbManager.getInstance().getContactList();
 	}
 	

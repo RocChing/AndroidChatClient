@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.roc.chatclient.R;
 import com.roc.chatclient.adapter.EaseContactAdapter;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.model.UserExtInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class EaseContactList extends RelativeLayout {
     protected Context context;
     protected ListView listView;
     protected EaseContactAdapter adapter;
-    protected List<User> contactList;
+    protected List<UserExtInfo> contactList;
     protected EaseSidebar sidebar;
     
     protected int primaryColor;
@@ -42,7 +43,7 @@ public class EaseContactList extends RelativeLayout {
             case MSG_UPDATE_LIST:
                 if(adapter != null){
                 	adapter.clear();
-                	adapter.addAll(new ArrayList<User>(contactList));
+                	adapter.addAll(new ArrayList<UserExtInfo>(contactList));
                 	adapter.notifyDataSetChanged();	
                 }
                 break;
@@ -80,8 +81,7 @@ public class EaseContactList extends RelativeLayout {
         initialLetterBg = ta.getDrawable(R.styleable.EaseContactList_ctsListInitialLetterBg);
         initialLetterColor = ta.getColor(R.styleable.EaseContactList_ctsListInitialLetterColor, 0);
         ta.recycle();
-        
-        
+
         LayoutInflater.from(context).inflate(R.layout.ease_widget_contact_list, this);
         listView = (ListView)findViewById(R.id.list);
         sidebar = (EaseSidebar) findViewById(R.id.sidebar);
@@ -92,9 +92,9 @@ public class EaseContactList extends RelativeLayout {
     /*
      * init view
      */
-    public void init(List<User> contactList){
+    public void init(List<UserExtInfo> contactList){
     	this.contactList = contactList;
-        adapter = new EaseContactAdapter(context, 0, new ArrayList<User>(contactList));
+        adapter = new EaseContactAdapter(context, 0, new ArrayList<UserExtInfo>(contactList));
         adapter.setPrimaryColor(primaryColor).setPrimarySize(primarySize).setInitialLetterBg(initialLetterBg)
             .setInitialLetterColor(initialLetterColor);
         listView.setAdapter(adapter);

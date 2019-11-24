@@ -1,11 +1,19 @@
 package com.roc.chatclient.model;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.roc.chatclient.db.DbManager;
 import com.roc.chatclient.db.InviteMessgeDao;
 import com.roc.chatclient.db.UserDao;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.receiver.IMsgCallback;
+import com.roc.chatclient.receiver.MsgString;
+import com.roc.chatclient.receiver.ReceiveMsgReceiver;
+import com.roc.chatclient.service.MsgService;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
@@ -15,7 +23,7 @@ import java.util.Map;
 public class ChatHelper {
 
     protected static final String TAG = "ChatHelper";
-    private Map<String, User> contactList;
+    private Map<String, UserExtInfo> contactList;
 
 //    private Map<String, RobotUser> robotList;
 
@@ -30,6 +38,7 @@ public class ChatHelper {
 
     private InviteMessgeDao inviteMessgeDao;
     private UserDao userDao;
+    private ReceiveMsgReceiver msgReceiver;
 
     //private CallReceiver callReceiver;
 
@@ -56,10 +65,20 @@ public class ChatHelper {
     }
 
     public void init(Context context) {
-        //PreferenceManager.init(context);
-        demoModel = new ChatModel(context);
         appContext = context;
+        initReceiver();
+        demoModel = new ChatModel(context);
         initDbDao();
+    }
+
+    private void initReceiver() {
+        msgReceiver = new ReceiveMsgReceiver();
+        IntentFilter filter = new IntentFilter(MsgString.ReceiveMsg);
+        LocalBroadcastManager.getInstance(appContext).registerReceiver(msgReceiver, filter);
+    }
+
+    public void setMsgCallback(IMsgCallback msgCallback) {
+        msgReceiver.setMsgCallback(msgCallback);
     }
 
     private void initDbDao() {
@@ -101,14 +120,14 @@ public class ChatHelper {
      *
      * @return
      */
-    public Map<String, User> getContactList() {
+    public Map<String, UserExtInfo> getContactList() {
         if (isLogin() && contactList == null) {
             contactList = demoModel.getContactList();
         }
 
         // return a empty non-null object to avoid app crash
         if (contactList == null) {
-            return new Hashtable<String, User>();
+            return new Hashtable<String, UserExtInfo>();
         }
 
         return contactList;
@@ -119,6 +138,7 @@ public class ChatHelper {
 //        isSyncingGroupsWithServer = false;
 //        isSyncingContactsWithServer = false;
 //        isSyncingBlackListWithServer = false;
+        LocalBroadcastManager.getInstance(appContext).unregisterReceiver(msgReceiver);
 
         demoModel.setGroupsSynced(false);
         demoModel.setContactSynced(false);

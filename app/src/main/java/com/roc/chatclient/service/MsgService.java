@@ -69,6 +69,9 @@ public class MsgService extends Service {
      */
     public void sendMsg(String msg) {
         Log.d(Tag, "sendMsg:" + msg);
+        if (StringUtils.isEmpty(msg)) return;
+        msg += "\r\n";
+
         messageProcessor.send(client, msg.getBytes());
     }
 
@@ -82,6 +85,8 @@ public class MsgService extends Service {
         @Override
         public void HandleMsg(Message msg) {
             String json = new String(msg.data, msg.offset, msg.length);
+
+            Log.d(Tag, "receiveMsg:" + json);
 
             Intent intent = new Intent();
             intent.setAction(MsgString.ReceiveMsg);

@@ -10,6 +10,7 @@ import com.roc.chatclient.entity.InviteMessage;
 import com.roc.chatclient.entity.InviteMessage.InviteMesageStatus;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.Constant;
+import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.util.CommonUtils;
 
 import java.util.ArrayList;
@@ -58,16 +59,16 @@ public class DbManager {
      *
      * @return
      */
-    synchronized public Map<String, User> getContactList() {
+    synchronized public Map<String, UserExtInfo> getContactList() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Map<String, User> users = new Hashtable<String, User>();
+        Map<String, UserExtInfo> users = new Hashtable<String, UserExtInfo>();
         if (db.isOpen()) {
             Cursor cursor = db.rawQuery("select * from " + UserDao.TABLE_NAME /* + " desc" */, null);
             while (cursor.moveToNext()) {
                 String username = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_ID));
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));
                 String avatar = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_AVATAR));
-                User user = new User();
+                UserExtInfo user = new UserExtInfo();
                 user.NickName = nick;
                 user.Avatar = avatar;
                 if (username.equals(Constant.NEW_FRIENDS_USERNAME) || username.equals(Constant.GROUP_USERNAME)

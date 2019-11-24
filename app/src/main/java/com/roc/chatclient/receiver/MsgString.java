@@ -6,6 +6,9 @@ public class MsgString {
 
     public final static String Login = "Login";
 
+    public final static String SearchUser = "SearchUser";
+    public final static String SearchUser_Args = "SearchUser_Args";
+
     public final static String Login_Args = "cmd_info";
 
     public final static String Error = "Error";

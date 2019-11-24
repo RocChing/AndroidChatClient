@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.ui.SettingActivity;
 import com.roc.chatclient.util.PreferenceManager;
 
@@ -31,7 +32,7 @@ public class Fragment_Profile extends BaseFragment {
 
     @Override
     protected void initData(View view) {
-        User user = PreferenceManager.getInstance().getCurrentUser();
+        UserExtInfo user = PreferenceManager.getInstance().getCurrentUser();
         if (user != null) {
             TextView tvname = view.findViewById(R.id.tvname);
             tvname.setText(user.NickName);
