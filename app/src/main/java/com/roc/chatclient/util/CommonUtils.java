@@ -1,6 +1,8 @@
 package com.roc.chatclient.util;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -130,5 +132,15 @@ public final class CommonUtils {
                 break;
         }
         return digest;
+    }
+
+    public static boolean hasNetwork(Context var0) {
+        if (var0 != null) {
+            ConnectivityManager var1 = (ConnectivityManager)var0.getSystemService("connectivity");
+            NetworkInfo var2 = var1.getActiveNetworkInfo();
+            return var2 != null ? var2.isAvailable() : false;
+        } else {
+            return false;
+        }
     }
 }
