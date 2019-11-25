@@ -12,9 +12,14 @@ public class ReceiveMsgInfo {
     public String Msg;
 
     /**
+     * 发送时间
+     */
+    public String ReceiveTime;
+
+    /**
      * 信息类型
      */
-    public MsgType Type;
+    public int Type;
 
     public ReceiveMsgInfo() {
     }

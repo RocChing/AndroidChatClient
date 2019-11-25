@@ -5,16 +5,28 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+
 import com.roc.chatclient.R;
+import com.roc.chatclient.model.EMConversation;
+import com.roc.chatclient.widget.EaseConversationList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * conversation fragment
@@ -24,8 +36,8 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     protected EditText query;
     protected ImageButton clearSearch;
     protected boolean hidden;
-//    protected List<EMConversation> conversationList = new ArrayList<EMConversation>();
-//    protected EaseConversationList conversationListView;
+    protected List<EMConversation> conversationList = new ArrayList<EMConversation>();
+    protected EaseConversationList conversationListView;
     protected FrameLayout errorItemContainer;
     protected View search_bar_view;
 
@@ -47,7 +59,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     @Override
     protected void initView() {
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        //conversationListView = (EaseConversationList) getView().findViewById(R.id.list);
+        conversationListView = getView().findViewById(R.id.list);
         query = (EditText) getView().findViewById(R.id.query);
         // button to clear content in search bar
         clearSearch = (ImageButton) getView().findViewById(R.id.search_clear);
@@ -59,25 +71,25 @@ public class EaseConversationListFragment extends EaseBaseFragment {
 
     @Override
     protected void setUpView() {
-//        conversationList.addAll(loadConversationList());
-//        conversationListView.init(conversationList);
+        conversationList.addAll(loadConversationList());
+        conversationListView.init(conversationList);
 
         if (listItemClickListener != null) {
-//            conversationListView.setOnItemClickListener(new OnItemClickListener() {
-//
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    EMConversation conversation = conversationListView.getItem(position);
-//                    listItemClickListener.onListItemClicked(conversation);
-//                }
-//            });
+            conversationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    EMConversation conversation = conversationListView.getItem(position);
+                    listItemClickListener.onListItemClicked(conversation);
+                }
+            });
         }
 
 //        EMClient.getInstance().addConnectionListener(connectionListener);
 
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                conversationListView.filter(s);
+                conversationListView.filter(s);
                 if (s.length() > 0) {
                     clearSearch.setVisibility(View.VISIBLE);
                 } else {
@@ -99,14 +111,14 @@ public class EaseConversationListFragment extends EaseBaseFragment {
             }
         });
 
-//        conversationListView.setOnTouchListener(new OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                hideSoftKeyboard();
-//                return false;
-//            }
-//        });
+        conversationListView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideSoftKeyboard();
+                return false;
+            }
+        });
     }
 
 
@@ -123,9 +135,9 @@ public class EaseConversationListFragment extends EaseBaseFragment {
                     break;
 
                 case MSG_REFRESH: {
-//                    conversationList.clear();
-                    //conversationList.addAll(loadConversationList());
-                    //conversationListView.refresh();
+                    conversationList.clear();
+                    conversationList.addAll(loadConversationList());
+                    conversationListView.refresh();
                     break;
                 }
                 default:
@@ -148,6 +160,61 @@ public class EaseConversationListFragment extends EaseBaseFragment {
         errorItemContainer.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * load conversation list
+     *
+     * @return +
+     */
+    protected List<EMConversation> loadConversationList() {
+        // get all conversations
+        Map<String, EMConversation> conversations = null; //EMClient.getInstance().chatManager().getAllConversations();
+        List<Pair<Long, EMConversation>> sortList = new ArrayList<Pair<Long, EMConversation>>();
+        /**
+         * lastMsgTime will change if there is new message during sorting
+         * so use synchronized to make sure timestamp of last message won't change.
+         */
+        synchronized (conversations) {
+            for (EMConversation conversation : conversations.values()) {
+//                if (conversation.getAllMessages().size() != 0) {
+//                    sortList.add(new Pair<Long, EMConversation>(conversation.getLastMessage().getMsgTime(), conversation));
+//                }
+                sortList.add(new Pair<Long, EMConversation>(0l, conversation));
+            }
+        }
+        try {
+            // Internal is TimSort algorithm, has bug
+            sortConversationByLastChatTime(sortList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<EMConversation> list = new ArrayList<EMConversation>();
+        for (Pair<Long, EMConversation> sortItem : sortList) {
+            list.add(sortItem.second);
+        }
+        return list;
+    }
+
+    /**
+     * sorting according timestamp of last message
+     *
+     * @param
+     */
+    private void sortConversationByLastChatTime(List<Pair<Long, EMConversation>> conversationList) {
+        Collections.sort(conversationList, new Comparator<Pair<Long, EMConversation>>() {
+            @Override
+            public int compare(final Pair<Long, EMConversation> con1, final Pair<Long, EMConversation> con2) {
+
+                if (con1.first == con2.first) {
+                    return 0;
+                } else if (con2.first > con1.first) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+
+        });
+    }
 
     /**
      * refresh ui
@@ -186,7 +253,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-       // EMClient.getInstance().removeConnectionListener(connectionListener);
+        // EMClient.getInstance().removeConnectionListener(connectionListener);
     }
 
     @Override
@@ -199,7 +266,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
 
     public interface EaseConversationListItemClickListener {
 
-        void onListItemClicked();
+        void onListItemClicked(EMConversation conversation);
     }
 
     /**

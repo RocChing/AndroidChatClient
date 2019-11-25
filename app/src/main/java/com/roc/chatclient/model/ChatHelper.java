@@ -34,6 +34,7 @@ public class ChatHelper {
 
     private ReceiveMsgReceiver msgReceiver;
 
+    private EaseEmojiconInfoProvider emojiconInfoProvider;
     //private CallReceiver callReceiver;
 
     private ChatHelper() {
@@ -62,6 +63,7 @@ public class ChatHelper {
         appContext = context;
         initReceiver();
         demoModel = new ChatModel(context);
+        setEmojiconInfoProvider();
     }
 
     private void initReceiver() {
@@ -158,5 +160,64 @@ public class ChatHelper {
 //        getUserProfileManager().reset();
         DbManager.getInstance().closeDB();
         instance = null;
+    }
+
+    private void setEmojiconInfoProvider() {
+        this.emojiconInfoProvider = new EaseEmojiconInfoProvider() {
+
+            @Override
+            public EaseEmojicon getEmojiconInfo(String emojiconIdentityCode) {
+                EaseEmojiconGroupEntity data = EmojiconExampleGroupData.getData();
+                for (EaseEmojicon emojicon : data.getEmojiconList()) {
+                    if (emojicon.getIdentityCode().equals(emojiconIdentityCode)) {
+                        return emojicon;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public Map<String, Object> getTextEmojiconMapping() {
+                return null;
+            }
+        };
+    }
+
+    /**
+     * Emojicon provider
+     *
+     * @return
+     */
+    public EaseEmojiconInfoProvider getEmojiconInfoProvider() {
+        return emojiconInfoProvider;
+    }
+
+    /**
+     * set Emojicon provider
+     *
+     * @param emojiconInfoProvider
+     */
+    public void setEmojiconInfoProvider(EaseEmojiconInfoProvider emojiconInfoProvider) {
+        this.emojiconInfoProvider = emojiconInfoProvider;
+    }
+
+    /**
+     * Emojicon provider
+     */
+    public interface EaseEmojiconInfoProvider {
+        /**
+         * return EaseEmojicon for input emojiconIdentityCode
+         *
+         * @param emojiconIdentityCode
+         * @return
+         */
+        EaseEmojicon getEmojiconInfo(String emojiconIdentityCode);
+
+        /**
+         * get Emojicon map, key is the text of emoji, value is the resource id or local path of emoji icon(can't be URL on internet)
+         *
+         * @return
+         */
+        Map<String, Object> getTextEmojiconMapping();
     }
 }
