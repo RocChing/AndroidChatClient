@@ -1,9 +1,12 @@
 package com.roc.chatclient.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 
+import com.roc.chatclient.ChatApplication;
 import com.roc.chatclient.R;
+import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.ui.CommonActivity;
 
@@ -45,6 +48,17 @@ public class MFGT {
                 R.anim.push_left_out);
     }
 
+    public static void goActivity(Class<?> className) {
+        Context context = ChatApplication.getInstance();
+
+        Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClass(context, className);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+
+        context.startActivity(intent);
+    }
+
 //    /**
 //     * 跳转登陆界面
 //     */
@@ -63,7 +77,7 @@ public class MFGT {
 //     * 跳转注册界面
 //     */
 //    public static void gotoRegister(Activity context) {
-//        startActivity(context, RegiseterActivity.class);
+//        startActivity(context, RegisterActivity.class);
 //    }
 //
 //    /**

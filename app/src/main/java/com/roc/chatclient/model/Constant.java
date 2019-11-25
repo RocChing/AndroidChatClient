@@ -2,6 +2,9 @@ package com.roc.chatclient.model;
 
 public class Constant {
 
+    public static final String ACCOUNT_ADMIN = "adimin";
+    public static final String[] DEVICEIDS = new String[]{"867977039664017","358240051111110"};
+
     public static final String MESSAGE_ATTR_IS_VOICE_CALL = "is_voice_call";
     public static final String MESSAGE_ATTR_IS_VIDEO_CALL = "is_video_call";
     public static final String MESSAGE_ATTR_IS_BIG_EXPRESSION = "em_is_big_expression";

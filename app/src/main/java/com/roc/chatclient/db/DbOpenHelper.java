@@ -19,7 +19,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.roc.chatclient.model.ChatHelper;
-import com.roc.chatclient.util.StringUtils;
 
 public class DbOpenHelper extends SQLiteOpenHelper {
 
@@ -69,7 +68,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     }
 
     private static String getUserDatabaseName() {
-        String name = ChatHelper.getInstance().getCurrentUsernName() + "_demo.db";
+        String name = ChatHelper.getInstance().getCurrentUserName() + "_demo.db";
         Log.d(Tag, "the db name is:" + name);
         return name;
     }

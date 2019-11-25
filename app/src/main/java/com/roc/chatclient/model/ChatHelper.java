@@ -3,17 +3,16 @@ package com.roc.chatclient.model;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.alibaba.fastjson.JSON;
+import com.roc.chatclient.R;
 import com.roc.chatclient.db.DbManager;
-import com.roc.chatclient.db.InviteMessgeDao;
-import com.roc.chatclient.db.UserDao;
-import com.roc.chatclient.entity.User;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
-import com.roc.chatclient.service.MsgService;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
@@ -75,6 +74,19 @@ public class ChatHelper {
         msgReceiver.setMsgCallback(msgCallback);
     }
 
+    public void sendMsg(CmdType type, Object data) {
+        String validString = appContext.getString(R.string.validString);
+        String json = JSON.toJSONString(new CmdInfo(validString, type, data));
+
+        Log.d(TAG, validString);
+        Log.d(TAG, json);
+
+        Intent intent = new Intent();
+        intent.setAction(MsgString.SendMsg);
+        intent.putExtra(MsgString.Default_Args, json);
+        LocalBroadcastManager.getInstance(appContext).sendBroadcast(intent);
+    }
+
     public ChatModel getModel() {
         return demoModel;
     }
@@ -82,8 +94,8 @@ public class ChatHelper {
     /**
      * get current user's id
      */
-    public String getCurrentUsernName() {
-        return demoModel.getCurrentUsernName();
+    public String getCurrentUserName() {
+        return demoModel.getCurrentUserName();
     }
 
     public boolean isLogin() {
@@ -103,9 +115,14 @@ public class ChatHelper {
 
         // return a empty non-null object to avoid app crash
         if (contactList == null) {
-            return new Hashtable<String, UserExtInfo>();
+            contactList = new Hashtable<String, UserExtInfo>();
         }
 
+        //add me
+        UserExtInfo user = PreferenceManager.getInstance().getCurrentUser();
+        if (!contactList.containsKey(user.Name)) {
+            contactList.put(user.Name, user);
+        }
         return contactList;
     }
 
@@ -113,6 +130,10 @@ public class ChatHelper {
         DbManager.getInstance().closeDB();//切换数据库
         PreferenceManager.getInstance().removeCurrentUserInfo();//移除用户信息
 
+        contactList = null;
+    }
+
+    public synchronized void resetOnlyData() {
         contactList = null;
     }
 

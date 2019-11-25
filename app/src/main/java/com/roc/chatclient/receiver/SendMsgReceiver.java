@@ -18,15 +18,9 @@ public class SendMsgReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        String json = "";
-        switch (action) {
-            case MsgString.Login:
-                json = intent.getStringExtra(MsgString.Login_Args);
-                break;
-            case MsgString.SearchUser:
-                json = intent.getStringExtra(MsgString.Default_Args);
-                break;
-        }
+        if (!action.equalsIgnoreCase(MsgString.SendMsg)) return;
+
+        String json = intent.getStringExtra(MsgString.Default_Args);
         if (!StringUtils.isEmpty(json)) {
             msgService.sendMsg(json);
         }

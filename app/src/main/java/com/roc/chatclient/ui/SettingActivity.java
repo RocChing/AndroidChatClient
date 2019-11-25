@@ -25,7 +25,8 @@ public class SettingActivity extends BaseActivity {
         ChatHelper.getInstance().resetData();
 
         Intent intent = new Intent(this, MainActivity.class);
-        FinishActivityManager.getManager().finishAllActivity();
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //FinishActivityManager.getManager().finishAllActivity();
         startActivity(intent);
         finish();
     }

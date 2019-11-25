@@ -98,11 +98,7 @@ public class ContactListFragment extends EaseContactListFragment {
     @SuppressWarnings("unchecked")
     @Override
     protected void setUpView() {
-        //设置联系人数据
-        //getMe(); // TODO del
         Map<String, UserExtInfo> m = ChatHelper.getInstance().getContactList();
-
-        addMe(m);
 
         if (m instanceof Hashtable<?, ?>) {
             m = (Map<String, UserExtInfo>) ((Hashtable<String, UserExtInfo>) m).clone();

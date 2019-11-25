@@ -43,7 +43,7 @@ public class ChatModel {
         }
     }
 
-    public String getCurrentUsernName() {
+    public String getCurrentUserName() {
         return PreferenceManager.getInstance().getCurrentUsername();
     }
 

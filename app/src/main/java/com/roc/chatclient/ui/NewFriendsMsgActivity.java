@@ -86,9 +86,9 @@ public class NewFriendsMsgActivity extends BaseActivity {
                 UserExtInfo user = (UserExtInfo) listView.getItemAtPosition(position);
                 boolean flag = ChatHelper.getInstance().getModel().saveContact(user);
                 if (flag) {
+                    ChatHelper.getInstance().resetOnlyData();
                     finish();
-                }
-                else {
+                } else {
                     CommonUtils.showLongToast("联系人添加失败");
                 }
             }
@@ -109,13 +109,7 @@ public class NewFriendsMsgActivity extends BaseActivity {
         public void afterTextChanged(Editable s) {
             if (s.length() < 3) return;
 
-            String validString = getString(R.string.validString);
-            String json = JSON.toJSONString(new CmdInfo(validString, CmdType.SearchUser, s.toString()));
-
-            Intent intent = new Intent();
-            intent.setAction(MsgString.Login);
-            intent.putExtra(MsgString.Login_Args, json);
-            LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+            ChatHelper.getInstance().sendMsg(CmdType.SearchUser, s.toString());
         }
 
         @Override

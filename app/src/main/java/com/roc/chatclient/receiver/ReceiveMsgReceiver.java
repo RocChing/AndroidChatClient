@@ -32,7 +32,7 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
         if (!action.equals(MsgString.ReceiveMsg)) return;
 
         String msg = intent.getStringExtra(MsgString.Default_Args);
-        Log.d("tag1", msg);
+
         CmdInfo info = JSON.parseObject(msg, CmdInfo.class);
         CmdType type = CmdType.getType(info.Type);
         switch (type) {

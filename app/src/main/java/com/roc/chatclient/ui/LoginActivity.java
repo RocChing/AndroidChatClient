@@ -27,6 +27,7 @@ import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
 import com.roc.chatclient.util.CommonUtils;
+import com.roc.chatclient.util.MFGT;
 import com.roc.chatclient.util.PreferenceManager;
 
 public class LoginActivity extends AppCompatActivity {
@@ -52,18 +53,12 @@ public class LoginActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         btnLogin.setEnabled(false);
 
-        String validString = getString(R.string.validString);
         EditText userName = findViewById(R.id.username);
         EditText password = findViewById(R.id.password);
         String name = userName.getText().toString().trim();
         String pwd = password.getText().toString().trim();
 
-        String json = JSON.toJSONString(new CmdInfo(validString, CmdType.Login, new LoginInfo(name, pwd)));
-
-        Intent intent = new Intent();
-        intent.setAction(MsgString.Login);
-        intent.putExtra(MsgString.Login_Args, json);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        ChatHelper.getInstance().sendMsg(CmdType.Login, new LoginInfo(name, pwd));
     }
 
     public void btnWentiClick(View view) {
@@ -102,9 +97,10 @@ public class LoginActivity extends AppCompatActivity {
                 UserExtInfo user = info.of(UserExtInfo.class);
                 preferenceManager.setCurrentUser(user);
 
-                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+//                startActivity(intent);
+//                finish();
+                MFGT.goActivity(HomeActivity.class);
             }
 
             @Override

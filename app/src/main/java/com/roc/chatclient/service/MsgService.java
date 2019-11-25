@@ -27,12 +27,7 @@ import java.util.LinkedList;
 public class MsgService extends Service {
 
     private NioClient client;
-
     private String Tag = "MsgService";
-    //    private String ip = "192.168.22.146";
-    private String ip = "192.168.150.141";
-    private int port = 8800;
-
     private SendMsgReceiver msgReceiver;
 
     public MsgService() {
@@ -43,11 +38,11 @@ public class MsgService extends Service {
     public void onCreate() {
         Log.d(Tag, "onCreate");
         msgReceiver = new SendMsgReceiver(this);
-        IntentFilter intentFilter = new IntentFilter(MsgString.Login);
+        IntentFilter intentFilter = new IntentFilter(MsgString.SendMsg);
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, intentFilter);
 
         client = new NioClient(messageProcessor, connectListener, receiveData);
-        client.setConnectAddress(new TcpAddress[]{new TcpAddress(ip, port)});
+        client.setConnectAddress(new TcpAddress[]{new TcpAddress(MsgString.ServerIp, MsgString.ServerPort)});
         client.connect();
     }
 
@@ -77,7 +72,7 @@ public class MsgService extends Service {
 
     public void sendMsg(CmdInfo info) {
         String json = JSON.toJSONString(info);
-        Log.d(Tag, json);
+        json += "\r\n";
         messageProcessor.send(client, json.getBytes());
     }
 
