@@ -33,17 +33,17 @@ public class DbOpenHelper extends SQLiteOpenHelper {
             + UserDao.COLUMN_NAME_ID + " TEXT PRIMARY KEY);";
 
     private static final String INIVTE_MESSAGE_TABLE_CREATE = "CREATE TABLE "
-            + InviteMessgeDao.TABLE_NAME + " ("
-            + InviteMessgeDao.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + InviteMessgeDao.COLUMN_NAME_FROM + " TEXT, "
-            + InviteMessgeDao.COLUMN_NAME_GROUP_ID + " TEXT, "
-            + InviteMessgeDao.COLUMN_NAME_GROUP_Name + " TEXT, "
-            + InviteMessgeDao.COLUMN_NAME_REASON + " TEXT, "
-            + InviteMessgeDao.COLUMN_NAME_STATUS + " INTEGER, "
-            + InviteMessgeDao.COLUMN_NAME_ISINVITEFROMME + " INTEGER, "
-            + InviteMessgeDao.COLUMN_NAME_UNREAD_MSG_COUNT + " INTEGER, "
-            + InviteMessgeDao.COLUMN_NAME_TIME + " TEXT, "
-            + InviteMessgeDao.COLUMN_NAME_GROUPINVITER + " TEXT); ";
+            + InviteMessageDao.TABLE_NAME + " ("
+            + InviteMessageDao.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + InviteMessageDao.COLUMN_NAME_FROM + " TEXT, "
+            + InviteMessageDao.COLUMN_NAME_GROUP_ID + " TEXT, "
+            + InviteMessageDao.COLUMN_NAME_GROUP_Name + " TEXT, "
+            + InviteMessageDao.COLUMN_NAME_REASON + " TEXT, "
+            + InviteMessageDao.COLUMN_NAME_STATUS + " INTEGER, "
+            + InviteMessageDao.COLUMN_NAME_ISINVITEFROMME + " INTEGER, "
+            + InviteMessageDao.COLUMN_NAME_UNREAD_MSG_COUNT + " INTEGER, "
+            + InviteMessageDao.COLUMN_NAME_TIME + " TEXT, "
+            + InviteMessageDao.COLUMN_NAME_GROUPINVITER + " TEXT); ";
 
     private static final String ROBOT_TABLE_CREATE = "CREATE TABLE "
             + UserDao.ROBOT_TABLE_NAME + " ("
@@ -55,6 +55,27 @@ public class DbOpenHelper extends SQLiteOpenHelper {
             + UserDao.PREF_TABLE_NAME + " ("
             + UserDao.COLUMN_NAME_DISABLED_GROUPS + " TEXT, "
             + UserDao.COLUMN_NAME_DISABLED_IDS + " TEXT);";
+
+    private static final String CREATE_MESSAGE_TABLE = "CREATE TABLE "+MessageDao.TABLE_NAME+"(" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "sender INTEGER," +
+            "chat_id INTEGER,"+
+            "content TEXT," +
+            "send_time TEXT," +
+            "type INTEGER"+
+            ")";
+
+    private static final String CREATE_CHAT_TABLE="CREATE TABLE " +
+            MessageDao.CHAT_TABLE_TABLE+" (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "name TEXT," +
+            "to_id TEXT," +
+            "avatar TEXT," +
+            "un_read_count INTEGER," +
+            "all_count INTEGER," +
+            "lsat_msg TEXT," +
+            "last_msg_time TEXT" +
+            ")";
 
     private DbOpenHelper(Context context) {
         super(context, getUserDatabaseName(), null, DATABASE_VERSION);
@@ -79,6 +100,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL(INIVTE_MESSAGE_TABLE_CREATE);
         db.execSQL(CREATE_PREF_TABLE);
         db.execSQL(ROBOT_TABLE_CREATE);
+
+        db.execSQL(CREATE_CHAT_TABLE);
+        db.execSQL(CREATE_MESSAGE_TABLE);
     }
 
     @Override
@@ -95,12 +119,12 @@ public class DbOpenHelper extends SQLiteOpenHelper {
             db.execSQL(ROBOT_TABLE_CREATE);
         }
         if (oldVersion < 5) {
-            db.execSQL("ALTER TABLE " + InviteMessgeDao.TABLE_NAME + " ADD COLUMN " +
-                    InviteMessgeDao.COLUMN_NAME_UNREAD_MSG_COUNT + " INTEGER ;");
+            db.execSQL("ALTER TABLE " + InviteMessageDao.TABLE_NAME + " ADD COLUMN " +
+                    InviteMessageDao.COLUMN_NAME_UNREAD_MSG_COUNT + " INTEGER ;");
         }
         if (oldVersion < 6) {
-            db.execSQL("ALTER TABLE " + InviteMessgeDao.TABLE_NAME + " ADD COLUMN " +
-                    InviteMessgeDao.COLUMN_NAME_GROUPINVITER + " TEXT;");
+            db.execSQL("ALTER TABLE " + InviteMessageDao.TABLE_NAME + " ADD COLUMN " +
+                    InviteMessageDao.COLUMN_NAME_GROUPINVITER + " TEXT;");
         }
     }
 

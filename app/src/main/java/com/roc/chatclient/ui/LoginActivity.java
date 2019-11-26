@@ -44,9 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         init();
-
-        PreferenceManager preferenceManager = PreferenceManager.getInstance();
-        Log.d(Tag, "get user name from preferenceManager is :" + preferenceManager.getCurrentUsername());
     }
 
     public void btnLoginClick(View view) {
@@ -97,9 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                 UserExtInfo user = info.of(UserExtInfo.class);
                 preferenceManager.setCurrentUser(user);
 
-//                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-//                startActivity(intent);
-//                finish();
                 MFGT.goActivity(HomeActivity.class);
             }
 

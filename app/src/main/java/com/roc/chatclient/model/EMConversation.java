@@ -6,8 +6,6 @@ public class EMConversation {
 
     private String nickName;
 
-
-
     private int toType;
 
     private int unreadMsgCount;

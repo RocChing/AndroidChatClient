@@ -2,6 +2,8 @@ package com.roc.chatclient.model;
 
 import android.content.Context;
 
+import com.roc.chatclient.db.MessageDao;
+import com.roc.chatclient.entity.ChatMsg;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.db.UserDao;
@@ -12,14 +14,16 @@ import java.util.List;
 import java.util.Map;
 
 public class ChatModel {
-    UserDao dao = null;
-    protected Context context = null;
-    protected Map<Key, Object> valueCache = new HashMap<Key, Object>();
+    private UserDao dao = null;
+    private MessageDao messageDao = null;
+    private Context context = null;
+    private Map<Key, Object> valueCache = new HashMap<Key, Object>();
 
     public ChatModel(Context ctx) {
         context = ctx;
-        PreferenceManager.init(context);
+
         dao = new UserDao(ctx);
+        messageDao = new MessageDao();
     }
 
     public boolean saveContactList(List<User> contactList) {
@@ -47,6 +51,29 @@ public class ChatModel {
         return PreferenceManager.getInstance().getCurrentUsername();
     }
 
+    public List<EMConversation> getEMConversationList() {
+        List<ChatMsg> list = messageDao.getChatList();
+        List<EMConversation> emConversations = new ArrayList<>();
+        for (ChatMsg msg : list) {
+            EMConversation conversation = new EMConversation();
+            ReceiveMsgInfo info = new ReceiveMsgInfo();
+            info.Type = 1;
+            info.ReceiveTime = msg.getLastMsgTime();
+            //info.From = new UserInfo(msg.getToId());
+            info.Msg = msg.getLastMsg();
+            conversation.setAllMsgCount(msg.getAllCount());
+            conversation.setLastMsg(info);
+            conversation.setName(msg.getName());
+            conversation.setNickName(msg.getName());
+            conversation.setToType(1);
+            conversation.setUnreadMsgCount(msg.getUnReadCount());
+        }
+        return emConversations;
+    }
+
+    public void saveMsg(ReceiveMsgInfo info) {
+        messageDao.saveMsg(info);
+    }
 //    public Map<String, RobotUser> getRobotList(){
 //        UserDao dao = new UserDao(context);
 //        return dao.getRobotUser();

@@ -18,11 +18,10 @@ public class InviteMessage {
 	private long time;
 	private String reason;
 
-	private InviteMesageStatus status;
+	private InviteMessageStatus status;
 	private String groupId;
 	private String groupName;
 	private String groupInviter;
-	
 
 	private int id;
 	
@@ -51,15 +50,13 @@ public class InviteMessage {
 		this.reason = reason;
 	}
 
-	public InviteMesageStatus getStatus() {
+	public InviteMessageStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(InviteMesageStatus status) {
+	public void setStatus(InviteMessageStatus status) {
 		this.status = status;
 	}
-
-	
 	
 	public int getId() {
 		return id;
@@ -95,7 +92,7 @@ public class InviteMessage {
 
 
 
-	public enum InviteMesageStatus{
+	public enum InviteMessageStatus {
 	    
 	    //==contact
 		/**being invited*/

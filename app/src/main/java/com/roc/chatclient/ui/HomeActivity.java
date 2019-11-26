@@ -1,10 +1,8 @@
 package com.roc.chatclient.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.roc.chatclient.R;
 import com.roc.chatclient.adapter.MainTabAdpter;
-import com.roc.chatclient.db.InviteMessgeDao;
+import com.roc.chatclient.db.InviteMessageDao;
 import com.roc.chatclient.ui.fragment.ContactListFragment;
 import com.roc.chatclient.ui.fragment.ConversationListFragment;
 import com.roc.chatclient.ui.fragment.Fragment_Dicover;
@@ -17,7 +15,6 @@ import com.roc.chatclient.widget.MFViewPager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -160,7 +157,7 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
      */
     public int getUnreadAddressCountTotal() {
         int unreadAddressCountTotal = 0;
-        InviteMessgeDao inviteMessgeDao = new InviteMessgeDao(this);
+        InviteMessageDao inviteMessgeDao = new InviteMessageDao(this);
         unreadAddressCountTotal = inviteMessgeDao.getUnreadMessagesCount();
         return unreadAddressCountTotal;
     }

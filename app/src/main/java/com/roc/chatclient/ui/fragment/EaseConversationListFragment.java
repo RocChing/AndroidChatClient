@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,12 +20,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.roc.chatclient.R;
+import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.EMConversation;
 import com.roc.chatclient.widget.EaseConversationList;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +46,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
 
     protected boolean isConflict;
 
+    protected String Tag = "EaseConversationListFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,14 +62,14 @@ public class EaseConversationListFragment extends EaseBaseFragment {
 
     @Override
     protected void initView() {
+        titleBar.setVisibility(View.GONE);
+
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         conversationListView = getView().findViewById(R.id.list);
         query = (EditText) getView().findViewById(R.id.query);
         // button to clear content in search bar
         clearSearch = (ImageButton) getView().findViewById(R.id.search_clear);
         errorItemContainer = (FrameLayout) getView().findViewById(R.id.fl_error_item);
-        titleBar.setVisibility(View.GONE);
-
         search_bar_view = getView().findViewById(R.id.search_bar_view);
     }
 
@@ -128,6 +132,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case 0:
+                    Log.d(Tag, "onConnectionDisconnected");
                     onConnectionDisconnected();
                     break;
                 case 1:
@@ -160,14 +165,19 @@ public class EaseConversationListFragment extends EaseBaseFragment {
         errorItemContainer.setVisibility(View.VISIBLE);
     }
 
+
+    protected List<EMConversation> loadConversationList() {
+        return ChatHelper.getInstance().getEMConversationList();
+    }
+
     /**
      * load conversation list
      *
      * @return +
      */
-    protected List<EMConversation> loadConversationList() {
+    protected List<EMConversation> loadConversationList2() {
         // get all conversations
-        Map<String, EMConversation> conversations = null; //EMClient.getInstance().chatManager().getAllConversations();
+        Map<String, EMConversation> conversations = new HashMap<>(); //EMClient.getInstance().chatManager().getAllConversations();
         List<Pair<Long, EMConversation>> sortList = new ArrayList<Pair<Long, EMConversation>>();
         /**
          * lastMsgTime will change if there is new message during sorting

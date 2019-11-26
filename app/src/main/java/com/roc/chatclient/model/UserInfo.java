@@ -5,7 +5,12 @@ public class UserInfo {
 
     public String Name;
 
-    public UserInfo(){
+    public UserInfo() {
 
+    }
+
+    public UserInfo(int id, String name) {
+        Id = id;
+        Name = name;
     }
 }

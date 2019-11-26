@@ -3,11 +3,10 @@ package com.roc.chatclient.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 import com.roc.chatclient.ChatApplication;
 import com.roc.chatclient.entity.InviteMessage;
-import com.roc.chatclient.entity.InviteMessage.InviteMesageStatus;
+import com.roc.chatclient.entity.InviteMessage.InviteMessageStatus;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.model.UserExtInfo;
@@ -31,6 +30,13 @@ public class DbManager {
             dbMgr = new DbManager();
         }
         return dbMgr;
+    }
+
+    public synchronized DbOpenHelper getDb() {
+        if (dbHelper == null) {
+            dbHelper = DbOpenHelper.getInstance(ChatApplication.getInstance());
+        }
+        return dbHelper;
     }
 
     /**
@@ -69,6 +75,7 @@ public class DbManager {
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));
                 String avatar = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_AVATAR));
                 UserExtInfo user = new UserExtInfo();
+
                 user.NickName = nick;
                 user.Avatar = avatar;
                 if (username.equals(Constant.NEW_FRIENDS_USERNAME) || username.equals(Constant.GROUP_USERNAME)
@@ -186,16 +193,16 @@ public class DbManager {
         int id = -1;
         if (db.isOpen()) {
             ContentValues values = new ContentValues();
-            values.put(InviteMessgeDao.COLUMN_NAME_FROM, message.getFrom());
-            values.put(InviteMessgeDao.COLUMN_NAME_GROUP_ID, message.getGroupId());
-            values.put(InviteMessgeDao.COLUMN_NAME_GROUP_Name, message.getGroupName());
-            values.put(InviteMessgeDao.COLUMN_NAME_REASON, message.getReason());
-            values.put(InviteMessgeDao.COLUMN_NAME_TIME, message.getTime());
-            values.put(InviteMessgeDao.COLUMN_NAME_STATUS, message.getStatus().ordinal());
-            values.put(InviteMessgeDao.COLUMN_NAME_GROUPINVITER, message.getGroupInviter());
-            db.insert(InviteMessgeDao.TABLE_NAME, null, values);
+            values.put(InviteMessageDao.COLUMN_NAME_FROM, message.getFrom());
+            values.put(InviteMessageDao.COLUMN_NAME_GROUP_ID, message.getGroupId());
+            values.put(InviteMessageDao.COLUMN_NAME_GROUP_Name, message.getGroupName());
+            values.put(InviteMessageDao.COLUMN_NAME_REASON, message.getReason());
+            values.put(InviteMessageDao.COLUMN_NAME_TIME, message.getTime());
+            values.put(InviteMessageDao.COLUMN_NAME_STATUS, message.getStatus().ordinal());
+            values.put(InviteMessageDao.COLUMN_NAME_GROUPINVITER, message.getGroupInviter());
+            db.insert(InviteMessageDao.TABLE_NAME, null, values);
 
-            Cursor cursor = db.rawQuery("select last_insert_rowid() from " + InviteMessgeDao.TABLE_NAME, null);
+            Cursor cursor = db.rawQuery("select last_insert_rowid() from " + InviteMessageDao.TABLE_NAME, null);
             if (cursor.moveToFirst()) {
                 id = cursor.getInt(0);
             }
@@ -214,7 +221,7 @@ public class DbManager {
     synchronized public void updateMessage(int msgId, ContentValues values) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (db.isOpen()) {
-            db.update(InviteMessgeDao.TABLE_NAME, values, InviteMessgeDao.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(msgId)});
+            db.update(InviteMessageDao.TABLE_NAME, values, InviteMessageDao.COLUMN_NAME_ID + " = ?", new String[]{String.valueOf(msgId)});
         }
     }
 
@@ -227,17 +234,17 @@ public class DbManager {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         List<InviteMessage> msgs = new ArrayList<InviteMessage>();
         if (db.isOpen()) {
-            Cursor cursor = db.rawQuery("select * from " + InviteMessgeDao.TABLE_NAME + " order by id desc", null);
+            Cursor cursor = db.rawQuery("select * from " + InviteMessageDao.TABLE_NAME + " order by id desc", null);
             while (cursor.moveToNext()) {
                 InviteMessage msg = new InviteMessage();
-                int id = cursor.getInt(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_ID));
-                String from = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_FROM));
-                String groupid = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_GROUP_ID));
-                String groupname = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_GROUP_Name));
-                String reason = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_REASON));
-                long time = cursor.getLong(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_TIME));
-                int status = cursor.getInt(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_STATUS));
-                String groupInviter = cursor.getString(cursor.getColumnIndex(InviteMessgeDao.COLUMN_NAME_GROUPINVITER));
+                int id = cursor.getInt(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_ID));
+                String from = cursor.getString(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_FROM));
+                String groupid = cursor.getString(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_GROUP_ID));
+                String groupname = cursor.getString(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_GROUP_Name));
+                String reason = cursor.getString(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_REASON));
+                long time = cursor.getLong(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_TIME));
+                int status = cursor.getInt(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_STATUS));
+                String groupInviter = cursor.getString(cursor.getColumnIndex(InviteMessageDao.COLUMN_NAME_GROUPINVITER));
 
                 msg.setId(id);
                 msg.setFrom(from);
@@ -247,24 +254,24 @@ public class DbManager {
                 msg.setTime(time);
                 msg.setGroupInviter(groupInviter);
 
-                if (status == InviteMesageStatus.BEINVITEED.ordinal())
-                    msg.setStatus(InviteMesageStatus.BEINVITEED);
-                else if (status == InviteMesageStatus.BEAGREED.ordinal())
-                    msg.setStatus(InviteMesageStatus.BEAGREED);
-                else if (status == InviteMesageStatus.BEREFUSED.ordinal())
-                    msg.setStatus(InviteMesageStatus.BEREFUSED);
-                else if (status == InviteMesageStatus.AGREED.ordinal())
-                    msg.setStatus(InviteMesageStatus.AGREED);
-                else if (status == InviteMesageStatus.REFUSED.ordinal())
-                    msg.setStatus(InviteMesageStatus.REFUSED);
-                else if (status == InviteMesageStatus.BEAPPLYED.ordinal())
-                    msg.setStatus(InviteMesageStatus.BEAPPLYED);
-                else if (status == InviteMesageStatus.GROUPINVITATION.ordinal())
-                    msg.setStatus(InviteMesageStatus.GROUPINVITATION);
-                else if (status == InviteMesageStatus.GROUPINVITATION_ACCEPTED.ordinal())
-                    msg.setStatus(InviteMesageStatus.GROUPINVITATION_ACCEPTED);
-                else if (status == InviteMesageStatus.GROUPINVITATION_DECLINED.ordinal())
-                    msg.setStatus(InviteMesageStatus.GROUPINVITATION_DECLINED);
+                if (status == InviteMessageStatus.BEINVITEED.ordinal())
+                    msg.setStatus(InviteMessageStatus.BEINVITEED);
+                else if (status == InviteMessageStatus.BEAGREED.ordinal())
+                    msg.setStatus(InviteMessageStatus.BEAGREED);
+                else if (status == InviteMessageStatus.BEREFUSED.ordinal())
+                    msg.setStatus(InviteMessageStatus.BEREFUSED);
+                else if (status == InviteMessageStatus.AGREED.ordinal())
+                    msg.setStatus(InviteMessageStatus.AGREED);
+                else if (status == InviteMessageStatus.REFUSED.ordinal())
+                    msg.setStatus(InviteMessageStatus.REFUSED);
+                else if (status == InviteMessageStatus.BEAPPLYED.ordinal())
+                    msg.setStatus(InviteMessageStatus.BEAPPLYED);
+                else if (status == InviteMessageStatus.GROUPINVITATION.ordinal())
+                    msg.setStatus(InviteMessageStatus.GROUPINVITATION);
+                else if (status == InviteMessageStatus.GROUPINVITATION_ACCEPTED.ordinal())
+                    msg.setStatus(InviteMessageStatus.GROUPINVITATION_ACCEPTED);
+                else if (status == InviteMessageStatus.GROUPINVITATION_DECLINED.ordinal())
+                    msg.setStatus(InviteMessageStatus.GROUPINVITATION_DECLINED);
 
                 msgs.add(msg);
             }
@@ -281,7 +288,7 @@ public class DbManager {
     synchronized public void deleteMessage(String from) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (db.isOpen()) {
-            db.delete(InviteMessgeDao.TABLE_NAME, InviteMessgeDao.COLUMN_NAME_FROM + " = ?", new String[]{from});
+            db.delete(InviteMessageDao.TABLE_NAME, InviteMessageDao.COLUMN_NAME_FROM + " = ?", new String[]{from});
         }
     }
 
@@ -289,7 +296,7 @@ public class DbManager {
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         if (db.isOpen()) {
-            Cursor cursor = db.rawQuery("select " + InviteMessgeDao.COLUMN_NAME_UNREAD_MSG_COUNT + " from " + InviteMessgeDao.TABLE_NAME, null);
+            Cursor cursor = db.rawQuery("select " + InviteMessageDao.COLUMN_NAME_UNREAD_MSG_COUNT + " from " + InviteMessageDao.TABLE_NAME, null);
             if (cursor.moveToFirst()) {
                 count = cursor.getInt(0);
             }
@@ -302,9 +309,9 @@ public class DbManager {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if (db.isOpen()) {
             ContentValues values = new ContentValues();
-            values.put(InviteMessgeDao.COLUMN_NAME_UNREAD_MSG_COUNT, count);
+            values.put(InviteMessageDao.COLUMN_NAME_UNREAD_MSG_COUNT, count);
 
-            db.update(InviteMessgeDao.TABLE_NAME, values, null, null);
+            db.update(InviteMessageDao.TABLE_NAME, values, null, null);
         }
     }
 

@@ -17,6 +17,7 @@ import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 public class ChatHelper {
@@ -62,7 +63,8 @@ public class ChatHelper {
     public void init(Context context) {
         appContext = context;
         initReceiver();
-        demoModel = new ChatModel(context);
+        PreferenceManager.init(context);
+        demoModel = new ChatModel(appContext);
         setEmojiconInfoProvider();
     }
 
@@ -126,6 +128,14 @@ public class ChatHelper {
             contactList.put(user.Name, user);
         }
         return contactList;
+    }
+
+    public List<EMConversation> getEMConversationList() {
+        return demoModel.getEMConversationList();
+    }
+
+    public void saveMsg(ReceiveMsgInfo info) {
+        demoModel.saveMsg(info);
     }
 
     public synchronized void resetData() {

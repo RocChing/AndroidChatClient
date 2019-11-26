@@ -28,18 +28,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 import com.roc.chatclient.R;
-import com.roc.chatclient.db.InviteMessgeDao;
+import com.roc.chatclient.db.InviteMessageDao;
 import com.roc.chatclient.db.UserDao;
-import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.ui.NewFriendsMsgActivity;
-import com.roc.chatclient.util.MFGT;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.ContactItemView;
 import com.roc.chatclient.widget.EmptyLayout;
-
-import com.roc.chatclient.model.ChatHelper;
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -54,7 +50,7 @@ public class ContactListFragment extends EaseContactListFragment {
     private BlackListSyncListener blackListSyncListener;
     private ContactInfoSyncListener contactInfoSyncListener;
     private ContactItemView applicationItem;
-    private InviteMessgeDao inviteMessgeDao;
+    private InviteMessageDao inviteMessgeDao;
     private EmptyLayout emptyLayout;
 
     @Override
@@ -85,7 +81,7 @@ public class ContactListFragment extends EaseContactListFragment {
         setContactsMap(m);
         super.refresh();
 //        if (inviteMessgeDao == null) {
-//            inviteMessgeDao = new InviteMessgeDao(getActivity());
+//            inviteMessgeDao = new InviteMessageDao(getActivity());
 //        }
 //        if (inviteMessgeDao.getUnreadMessagesCount() > 0) {
 //            applicationItem.showUnreadMsgView();
@@ -211,7 +207,7 @@ public class ContactListFragment extends EaseContactListFragment {
                 // 删除此联系人
                 deleteContact(toBeProcessUser);
                 // 删除相关的邀请消息
-                InviteMessgeDao dao = new InviteMessgeDao(getActivity());
+                InviteMessageDao dao = new InviteMessageDao(getActivity());
                 dao.deleteMessage(toBeProcessUser.Name);
             } catch (Exception e) {
                 e.printStackTrace();
