@@ -1,6 +1,7 @@
 package com.roc.chatclient.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.roc.chatclient.db.MessageDao;
 import com.roc.chatclient.entity.ChatMsg;
@@ -68,6 +69,7 @@ public class ChatModel {
             conversation.setToType(1);
             conversation.setUnreadMsgCount(msg.getUnReadCount());
         }
+        Log.d("bbb", "the getEMConversationList list count is:" + emConversations.size());
         return emConversations;
     }
 

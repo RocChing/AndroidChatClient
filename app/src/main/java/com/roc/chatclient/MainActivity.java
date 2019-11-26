@@ -10,10 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.ui.HomeActivity;
 import com.roc.chatclient.ui.LoginActivity;
 import com.roc.chatclient.ui.RegisterActivity;
+import com.roc.chatclient.util.MFGT;
 import com.roc.chatclient.util.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {

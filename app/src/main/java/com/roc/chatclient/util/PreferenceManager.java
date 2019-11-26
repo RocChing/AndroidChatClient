@@ -200,7 +200,6 @@ public class PreferenceManager {
 
     public String getCurrentUsername() {
         String name = mSharedPreferences.getString(SHARED_KEY_CURRENTUSER_USERNAME, null);
-        Log.d("PreferenceManager", "the name from source is: " + name);
         return name;
     }
 
@@ -220,6 +219,12 @@ public class PreferenceManager {
             return JSON.parseObject(json, UserExtInfo.class);
         }
         return null;
+    }
+
+    public int getCurrentUserId() {
+        UserExtInfo info = getCurrentUser();
+        if (info == null) return 0;
+        return info.Id;
     }
 
     public boolean isLogin() {

@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.alibaba.fastjson.JSON;
+import com.roc.chatclient.R;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.receiver.SendMsgReceiver;
@@ -20,6 +21,7 @@ import com.roc.chatclient.socket.structures.BaseMessageProcessor;
 import com.roc.chatclient.socket.structures.IConnectListener;
 import com.roc.chatclient.socket.structures.TcpAddress;
 import com.roc.chatclient.socket.structures.message.Message;
+import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
 import java.util.LinkedList;
@@ -60,18 +62,19 @@ public class MsgService extends Service {
     /**
      * 发送消息
      *
-     * @param msg
+     * @param json
      */
-    public void sendMsg(String msg) {
-        Log.d(Tag, "sendMsg:" + msg);
-        if (StringUtils.isEmpty(msg)) return;
-        msg += "\r\n";
+    public void sendMsg(String json) {
+        Log.d(Tag, "sendMsg:" + json);
+        if (StringUtils.isEmpty(json)) return;
+        json += "\r\n";
 
-        messageProcessor.send(client, msg.getBytes());
+        messageProcessor.send(client, json.getBytes());
     }
 
     public void sendMsg(CmdInfo info) {
         String json = JSON.toJSONString(info);
+        Log.d(Tag, "sendMsg:" + json);
         json += "\r\n";
         messageProcessor.send(client, json.getBytes());
     }
@@ -101,6 +104,10 @@ public class MsgService extends Service {
         @Override
         public void onConnectionSuccess() {
             Log.i(Tag, "connected server success");
+
+            int id = PreferenceManager.getInstance().getCurrentUserId();
+            String validString = getString(R.string.validString);
+            sendMsg(new CmdInfo(validString, CmdType.LoginById, id));
         }
 
         @Override

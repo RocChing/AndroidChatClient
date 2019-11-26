@@ -73,7 +73,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
             "avatar TEXT," +
             "un_read_count INTEGER," +
             "all_count INTEGER," +
-            "lsat_msg TEXT," +
+            "last_msg TEXT," +
             "last_msg_time TEXT" +
             ")";
 

@@ -3,6 +3,7 @@ package com.roc.chatclient.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.roc.chatclient.service.MsgService;
 import com.roc.chatclient.util.StringUtils;
@@ -21,6 +22,7 @@ public class SendMsgReceiver extends BroadcastReceiver {
         if (!action.equalsIgnoreCase(MsgString.SendMsg)) return;
 
         String json = intent.getStringExtra(MsgString.Default_Args);
+        Log.d("aaa", json);
         if (!StringUtils.isEmpty(json)) {
             msgService.sendMsg(json);
         }
