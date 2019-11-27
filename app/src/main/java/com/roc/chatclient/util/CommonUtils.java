@@ -1,5 +1,6 @@
 package com.roc.chatclient.util;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,6 +15,7 @@ import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.model.UserExtInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.roc.chatclient.R;
 
@@ -142,5 +144,11 @@ public final class CommonUtils {
         } else {
             return false;
         }
+    }
+
+    public static boolean isSingleActivity(Context var0) {
+        ActivityManager var1 = (ActivityManager)var0.getSystemService("activity");
+        List var2 = var1.getRunningTasks(1);
+        return ((ActivityManager.RunningTaskInfo)var2.get(0)).numRunning == 1;
     }
 }

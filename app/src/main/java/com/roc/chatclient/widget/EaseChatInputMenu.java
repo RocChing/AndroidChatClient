@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.roc.chatclient.R;
+import com.roc.chatclient.model.EaseEmojicon;
 
 /**
  * input menu
@@ -27,7 +28,7 @@ public class EaseChatInputMenu extends LinearLayout {
     FrameLayout primaryMenuContainer, emojiconMenuContainer;
     protected EaseChatPrimaryMenuBase chatPrimaryMenu;
     //protected EaseEmojiconMenuBase emojiconMenu;
-    //protected EaseChatExtendMenu chatExtendMenu;
+    protected EaseChatExtendMenu chatExtendMenu;
     protected FrameLayout chatExtendMenuContainer;
     protected LayoutInflater layoutInflater;
 
@@ -59,7 +60,7 @@ public class EaseChatInputMenu extends LinearLayout {
         chatExtendMenuContainer = (FrameLayout) findViewById(R.id.extend_menu_container);
 
         // extend menu
-//         chatExtendMenu = (EaseChatExtendMenu) findViewById(R.id.extend_menu);
+        chatExtendMenu = (EaseChatExtendMenu) findViewById(R.id.extend_menu);
     }
 
     /**
@@ -75,9 +76,9 @@ public class EaseChatInputMenu extends LinearLayout {
             return;
         }
         // primary menu, use default if no customized one
-//        if(chatPrimaryMenu == null){
-//            chatPrimaryMenu = (EaseChatPrimaryMenu) layoutInflater.inflate(R.layout.ease_layout_chat_primary_menu, null);
-//        }
+        if (chatPrimaryMenu == null) {
+            chatPrimaryMenu = (EaseChatPrimaryMenu) layoutInflater.inflate(R.layout.ease_layout_chat_primary_menu, null);
+        }
         primaryMenuContainer.addView(chatPrimaryMenu);
 
         // emojicon menu, use default if no customized one
@@ -91,8 +92,8 @@ public class EaseChatInputMenu extends LinearLayout {
 //        }
 //        emojiconMenuContainer.addView(emojiconMenu);
 
-        // processChatMenu();
-        // chatExtendMenu.init();
+        processChatMenu();
+        chatExtendMenu.init();
 
         inited = true;
     }
@@ -122,33 +123,29 @@ public class EaseChatInputMenu extends LinearLayout {
         return chatPrimaryMenu;
     }
 
-//    public EaseChatExtendMenu getExtendMenu(){
-//        return chatExtendMenu;
-//    }
+    public EaseChatExtendMenu getExtendMenu() {
+        return chatExtendMenu;
+    }
 //
 //    public EaseEmojiconMenuBase getEmojiconMenu(){
 //        return emojiconMenu;
 //    }
 
 
-    /**
-     * register menu item
-     *
-     * @param name
-     *            item name
-     * @param drawableRes
-     *            background of item
-     * @param itemId
-     *             id
-     * @param listener
-     *            on click event of item
-     */
+//    /**
+//     * register menu item
+//     *
+//     * @param name        item name
+//     * @param drawableRes background of item
+//     * @param itemId      id
+//     * @param listener    on click event of item
+//     */
 //    public void registerExtendMenuItem(String name, int drawableRes, int itemId,
 //                                       EaseChatExtendMenuItemClickListener listener) {
 //        chatExtendMenu.registerMenuItem(name, drawableRes, itemId, listener);
 //    }
 
-//    /**
+    //    /**
 //     * register menu item
 //     *
 //     * @param nameRes
@@ -164,59 +161,57 @@ public class EaseChatInputMenu extends LinearLayout {
 //            EaseChatExtendMenuItemClickListener listener) {
 //        chatExtendMenu.registerMenuItem(nameRes, drawableRes, itemId, listener);
 //    }
+    protected void processChatMenu() {
+        // send message button
+        chatPrimaryMenu.setChatPrimaryMenuListener(new EaseChatPrimaryMenuBase.EaseChatPrimaryMenuListener() {
 
+            @Override
+            public void onSendBtnClicked(String content) {
+                if (listener != null)
+                    listener.onSendMessage(content);
+            }
 
-//    protected void processChatMenu() {
-//        // send message button
-//        chatPrimaryMenu.setChatPrimaryMenuListener(new EaseChatPrimaryMenuListener() {
-//
-//            @Override
-//            public void onSendBtnClicked(String content) {
-//                if (listener != null)
-//                    listener.onSendMessage(content);
-//            }
-//
-//            @Override
-//            public void onToggleVoiceBtnClicked() {
-//                hideExtendMenuContainer();
-//            }
-//
-//            @Override
-//            public void onToggleExtendClicked() {
+            @Override
+            public void onToggleVoiceBtnClicked() {
+                hideExtendMenuContainer();
+            }
+
+            @Override
+            public void onToggleExtendClicked() {
 //                toggleMore();
-//            }
-//
-//            @Override
-//            public void onToggleEmojiconClicked() {
+            }
+
+            @Override
+            public void onToggleEmojiconClicked() {
 //                toggleEmojicon();
-//            }
-//
-//            @Override
-//            public void onEditTextClicked() {
-//                hideExtendMenuContainer();
-//            }
-//
-//
-//            @Override
-//            public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
-//                if(listener != null){
-//                    return listener.onPressToSpeakBtnTouch(v, event);
-//                }
-//                return false;
-//            }
-//        });
-//
-//        // emojicon menu
+            }
+
+            @Override
+            public void onEditTextClicked() {
+                hideExtendMenuContainer();
+            }
+
+
+            @Override
+            public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
+                if (listener != null) {
+                    return listener.onPressToSpeakBtnTouch(v, event);
+                }
+                return false;
+            }
+        });
+
+        // emojicon menu
 //        emojiconMenu.setEmojiconMenuListener(new EaseEmojiconMenuListener() {
 //
 //            @Override
 //            public void onExpressionClicked(EaseEmojicon emojicon) {
-//                if(emojicon.getType() != EaseEmojicon.Type.BIG_EXPRESSION){
-//                    if(emojicon.getEmojiText() != null){
-//                        chatPrimaryMenu.onEmojiconInputEvent(EaseSmileUtils.getSmiledText(context,emojicon.getEmojiText()));
+//                if (emojicon.getType() != EaseEmojicon.Type.BIG_EXPRESSION) {
+//                    if (emojicon.getEmojiText() != null) {
+//                        chatPrimaryMenu.onEmojiconInputEvent(EaseSmileUtils.getSmiledText(context, emojicon.getEmojiText()));
 //                    }
-//                }else{
-//                    if(listener != null){
+//                } else {
+//                    if (listener != null) {
 //                        listener.onBigExpressionClicked(emojicon);
 //                    }
 //                }
@@ -227,8 +222,8 @@ public class EaseChatInputMenu extends LinearLayout {
 //                chatPrimaryMenu.onEmojiconDeleteEvent();
 //            }
 //        });
-//
-//    }
+
+    }
 
 
     /**
@@ -337,9 +332,10 @@ public class EaseChatInputMenu extends LinearLayout {
 
         /**
          * when big icon pressed
+         *
          * @param emojicon
          */
-//        void onBigExpressionClicked(EaseEmojicon emojicon);
+        void onBigExpressionClicked(EaseEmojicon emojicon);
 
         /**
          * when speak button is touched

@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
 import com.roc.chatclient.db.DbManager;
+import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
@@ -138,8 +139,21 @@ public class ChatHelper {
         return contactList;
     }
 
+    public UserExtInfo getUserInfo(String name) {
+        if (contactList != null) {
+            if (contactList.containsKey(name)) {
+                return contactList.get(name);
+            }
+        }
+        return new UserExtInfo();
+    }
+
     public List<EMConversation> getEMConversationList() {
         return demoModel.getEMConversationList();
+    }
+
+    public List<Msg> getChatMsgList(int pageIndex, int pageSize, int chatId) {
+        return demoModel.getChatMsgList(pageIndex, pageSize, chatId);
     }
 
     public void saveMsg(ReceiveMsgInfo info) {

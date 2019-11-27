@@ -12,7 +12,17 @@ public class EMConversation {
 
     private int allMsgCount;
 
+    private int chatId;
+
     private ReceiveMsgInfo lastMsg;
+
+    public int getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(int chatId) {
+        this.chatId = chatId;
+    }
 
     public String getName() {
         return name;

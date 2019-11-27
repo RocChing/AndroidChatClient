@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 //import com.hyphenate.easeui.ui.EaseChatFragment;
 //import com.hyphenate.util.EasyUtils;
 import com.roc.chatclient.R;
+import com.roc.chatclient.ui.fragment.ChatFragment;
+import com.roc.chatclient.ui.fragment.EaseChatFragment;
 import com.roc.chatclient.util.MFGT;
 
 /**
@@ -22,22 +24,21 @@ import com.roc.chatclient.util.MFGT;
  */
 public class ChatActivity extends BaseEaseChatActivity {
     public static ChatActivity activityInstance;
-//    private EaseChatFragment chatFragment;
-    String toChatUsername;
+    private EaseChatFragment chatFragment;
+    private String toChatUsername;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.em_activity_chat);
-//        activityInstance = this;
+        activityInstance = this;
 //        //get user id or group id
-//        toChatUsername = getIntent().getExtras().getString("userId");
+        toChatUsername = getIntent().getExtras().getString("userId");
 //        //use EaseChatFratFragment
-//        chatFragment = new ChatFragment();
+        chatFragment = new ChatFragment();
 //        //pass parameters to chat fragment
-//        chatFragment.setArguments(getIntent().getExtras());
-//        getSupportFragmentManager().beginTransaction().add(R.id.container, chatFragment).commit();
-        
+        chatFragment.setArguments(getIntent().getExtras());
+        getSupportFragmentManager().beginTransaction().add(R.id.container, chatFragment).commit();
     }
     
     @Override
@@ -61,7 +62,7 @@ public class ChatActivity extends BaseEaseChatActivity {
     
     @Override
     public void onBackPressed() {
-//        chatFragment.onBackPressed();
+        chatFragment.onBackPressed();
 //        if (EasyUtils.isSingleActivity(this)) {
 //            Intent intent = new Intent(this, HomeActivity.class);
 //            startActivity(intent);

@@ -74,20 +74,6 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         img_right.setVisibility(View.VISIBLE);
         img_right.setImageResource(R.drawable.icon_add);
 
-//        ChatHelper.getInstance().setMsgCallback(new IMsgCallback() {
-//            @Override
-//            public void HandleMsg(CmdInfo info, String msg) {
-//                ReceiveMsgInfo receiveMsgInfo = info.of(ReceiveMsgInfo.class);
-//                ChatHelper.getInstance().saveMsg(receiveMsgInfo);
-//                //handler.sendEmptyMessage(2);
-//            }
-//
-//            @Override
-//            public void HandleError(CmdInfo info, String msg) {
-//                CommonUtils.showLongToast("发生错误-" + info.Data.toString());
-//            }
-//        });
-
         ChatHelper.getInstance().setCheckMsgCallback(new IMsgCallback() {
             @Override
             public void HandleMsg(CmdInfo info, String msg) {

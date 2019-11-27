@@ -50,11 +50,12 @@ public class MessageDao {
         return list;
     }
 
-    public List<Msg> getChatMsgList(int chatId) {
+    public List<Msg> getChatMsgList(int pageIndex, int pageSize, int chatId) {
         List<Msg> list = new ArrayList<>();
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
         if (db.isOpen()) {
-            String sql = "select * from " + TABLE_NAME + " where chat_id=" + chatId + " order by id desc";
+            int offset = (pageIndex - 1) * pageSize;
+            String sql = "select * from " + TABLE_NAME + " where chat_id=" + chatId + " order by id desc limit " + pageSize + " offset " + offset;
             Cursor cursor = db.rawQuery(sql, null);
             while (cursor.moveToNext()) {
                 Msg msg = new Msg();

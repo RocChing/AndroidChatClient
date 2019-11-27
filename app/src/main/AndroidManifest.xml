@@ -19,6 +19,12 @@
         <activity android:name=".ui.HomeActivity" />
         <activity android:name=".ui.RegisterActivity" />
 
+        <activity
+            android:name=".ui.ChatActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"></activity>
+
         <receiver
             android:name=".receiver.ReceiveMsgReceiver"
             android:enabled="true"

@@ -3,7 +3,7 @@ package com.roc.chatclient.model;
 public class Constant {
 
     public static final String ACCOUNT_ADMIN = "adimin";
-    public static final String[] DEVICEIDS = new String[]{"867977039664017","358240051111110"};
+    public static final String[] DEVICEIDS = new String[]{"867977039664017", "358240051111110"};
 
     public static final String MESSAGE_ATTR_IS_VOICE_CALL = "is_voice_call";
     public static final String MESSAGE_ATTR_IS_VIDEO_CALL = "is_video_call";
@@ -15,6 +15,8 @@ public class Constant {
     public static final int CHATTYPE_CHATROOM = 3;
     public static final String EXTRA_CHAT_TYPE = "chatType";
     public static final String EXTRA_USER_ID = "userId";
+
+    public static final String EXTRA_CHAT_ID = "chat_id";
 
     public static final String NEW_FRIENDS_USERNAME = "item_new_friends";
     public static final String GROUP_USERNAME = "item_groups";

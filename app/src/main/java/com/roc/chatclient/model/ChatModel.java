@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.roc.chatclient.db.MessageDao;
 import com.roc.chatclient.entity.ChatMsg;
+import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.db.UserDao;
@@ -68,10 +69,15 @@ public class ChatModel {
             conversation.setNickName(msg.getName());
             conversation.setToType(1);
             conversation.setUnreadMsgCount(msg.getUnReadCount());
+            conversation.setChatId(msg.getId());
             emConversations.add(conversation);
         }
 //        Log.d("bbb", "the getEMConversationList list count is:" + emConversations.size());
         return emConversations;
+    }
+
+    public List<Msg> getChatMsgList(int pageIndex, int pageSize, int chatId) {
+        return messageDao.getChatMsgList(pageIndex, pageSize, chatId);
     }
 
     public void saveMsg(ReceiveMsgInfo info) {

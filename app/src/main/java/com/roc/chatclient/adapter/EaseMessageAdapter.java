@@ -32,6 +32,8 @@ import com.roc.chatclient.widget.chatrow.EaseChatRow;
 import com.roc.chatclient.widget.chatrow.EaseChatRowText;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
+import java.util.List;
+
 
 public class EaseMessageAdapter extends BaseAdapter {
 
@@ -91,7 +93,7 @@ public class EaseMessageAdapter extends BaseAdapter {
         private void refreshList() {
             // you should not call getAllMessages() in UI thread
             // otherwise there is problem when refreshing UI and there is new message arrive
-//			messages = (Msg[]) conversation.getAllMessages().toArray(new Msg[0]);
+            //messages = (Msg[]) conversation.getAllMessages().toArray(new Msg[0]);
 //			conversation.markAllMessagesAsRead();
             notifyDataSetChanged();
         }
@@ -116,6 +118,10 @@ public class EaseMessageAdapter extends BaseAdapter {
             }
         }
     };
+
+    public void setMessages(List<Msg> list) {
+        messages = list.toArray(new Msg[list.size()]);
+    }
 
     public void refresh() {
         if (handler.hasMessages(HANDLER_MESSAGE_REFRESH_LIST)) {

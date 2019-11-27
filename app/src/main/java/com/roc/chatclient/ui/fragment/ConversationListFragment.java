@@ -1,5 +1,6 @@
 package com.roc.chatclient.ui.fragment;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -13,9 +14,11 @@ import com.roc.chatclient.R;
 import com.roc.chatclient.db.InviteMessageDao;
 import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
+import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.model.EMConversation;
 import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.receiver.IMsgCallback;
+import com.roc.chatclient.ui.ChatActivity;
 import com.roc.chatclient.util.CommonUtils;
 
 public class ConversationListFragment extends EaseConversationListFragment {
@@ -61,20 +64,21 @@ public class ConversationListFragment extends EaseConversationListFragment {
                     Toast.makeText(getActivity(), R.string.Cant_chat_with_yourself, Toast.LENGTH_LONG).show();
                 else {
                     // 进入聊天页面
-//                    Intent intent = new Intent(getActivity(), ChatActivity.class);
-////                    if(conversation.isGroup()){
-////                        if(conversation.getType() == EMConversationType.ChatRoom){
-////                            // it's group chat
-////                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_CHATROOM);
-////                        }else{
-////                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_GROUP);
-////                        }
-////                    }
-//                    // it's single chat
-//                    intent.putExtra(Constant.EXTRA_USER_ID, username);
-//                    startActivity(intent);
-//                    getActivity().overridePendingTransition(R.anim.push_left_in,
-//                            R.anim.push_left_out);
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+//                    if(conversation.isGroup()){
+//                        if(conversation.getType() == EMConversationType.ChatRoom){
+//                            // it's group chat
+//                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_CHATROOM);
+//                        }else{
+//                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_GROUP);
+//                        }
+//                    }
+                    // it's single chat
+                    intent.putExtra(Constant.EXTRA_CHAT_ID, conversation.getChatId());
+                    intent.putExtra(Constant.EXTRA_USER_ID, username);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.push_left_in,
+                            R.anim.push_left_out);
                 }
             }
         });
