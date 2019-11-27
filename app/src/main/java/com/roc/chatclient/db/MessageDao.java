@@ -3,6 +3,7 @@ package com.roc.chatclient.db;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.roc.chatclient.entity.ChatMsg;
 import com.roc.chatclient.entity.Msg;
@@ -16,6 +17,7 @@ public class MessageDao {
 
     static String CHAT_TABLE_TABLE = "chat_list";
 
+    private String Tag = "MessageDao";
     //private DbOpenHelper dbHelper;
 
     public MessageDao() {
@@ -70,6 +72,10 @@ public class MessageDao {
     }
 
     public void saveMsg(Msg msg) {
+        saveMsg(msg, true);
+    }
+
+    public void saveMsg(Msg msg, boolean update) {
         SQLiteDatabase db = getDbHelper().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("chat_id", msg.getChatId());
@@ -80,8 +86,11 @@ public class MessageDao {
         if (db.isOpen()) {
             db.insert(TABLE_NAME, null, values);
 
-            String sql = "update " + CHAT_TABLE_TABLE + " set all_count=all_count+1,un_read_count=un_read_count+1,last_msg='" + msg.getContent() + "' where id=" + msg.getChatId();
-            db.execSQL(sql);
+            if (update) {
+                String sql = "update " + CHAT_TABLE_TABLE + " set all_count=all_count+1,un_read_count=un_read_count+1,last_msg='" + msg.getContent() + "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
+                db.execSQL(sql);
+//                Log.d(Tag, "the update chat_list");
+            }
         }
     }
 
@@ -90,23 +99,26 @@ public class MessageDao {
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         int id = 0;
         if (db.isOpen()) {
-            String sql_query = "select * from " + CHAT_TABLE_TABLE + " where to_id='" + info.From.Id + "'";
-            Cursor cursor = db.rawQuery(sql_query, null);
-            while (cursor.moveToLast()) {
+            String sql_query = "select * from " + CHAT_TABLE_TABLE + " where to_id=?";
+            Cursor cursor = db.rawQuery(sql_query, new String[]{info.From.Id + ""});
+            if (cursor.moveToFirst()) {
                 id = cursor.getInt(cursor.getColumnIndex("id"));
             }
             cursor.close();
         }
+//        Log.d(Tag, "the chat_list id is:" + id);
         Msg msg = new Msg();
         msg.setSendTime(info.ReceiveTime);
         msg.setType(info.Type);
         msg.setContent(info.Msg);
         msg.setSender(info.From.Id);
 
+        boolean update = true;
         if (id == 0) {
             SQLiteDatabase db_insert = dbOpenHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("all_count", 1);
+            values.put("un_read_count", 1);
             values.put("avatar", "");
             values.put("last_msg", info.Msg);
             values.put("last_msg_time", info.ReceiveTime);
@@ -117,11 +129,15 @@ public class MessageDao {
 
                 Cursor cursor = db.rawQuery("select last_insert_rowid() from " + CHAT_TABLE_TABLE, null);
                 if (cursor.moveToFirst()) {
-                    msg.setChatId(cursor.getInt(0));
+                    id = cursor.getInt(0);
                 }
+                update = false;
             }
         }
-        saveMsg(msg);
+
+        msg.setChatId(id);
+//        Log.d(Tag, "the update value is:" + update);
+        saveMsg(msg, update);
     }
 
     public void deleteChat(int chatId) {

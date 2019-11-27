@@ -3,6 +3,10 @@ package com.roc.chatclient.ui;
 import com.roc.chatclient.R;
 import com.roc.chatclient.adapter.MainTabAdpter;
 import com.roc.chatclient.db.InviteMessageDao;
+import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.CmdInfo;
+import com.roc.chatclient.model.ReceiveMsgInfo;
+import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.ui.fragment.ContactListFragment;
 import com.roc.chatclient.ui.fragment.ConversationListFragment;
 import com.roc.chatclient.ui.fragment.Fragment_Dicover;
@@ -69,6 +73,38 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
         img_right.setVisibility(View.VISIBLE);
         img_right.setImageResource(R.drawable.icon_add);
+
+//        ChatHelper.getInstance().setMsgCallback(new IMsgCallback() {
+//            @Override
+//            public void HandleMsg(CmdInfo info, String msg) {
+//                ReceiveMsgInfo receiveMsgInfo = info.of(ReceiveMsgInfo.class);
+//                ChatHelper.getInstance().saveMsg(receiveMsgInfo);
+//                //handler.sendEmptyMessage(2);
+//            }
+//
+//            @Override
+//            public void HandleError(CmdInfo info, String msg) {
+//                CommonUtils.showLongToast("发生错误-" + info.Data.toString());
+//            }
+//        });
+
+        ChatHelper.getInstance().setCheckMsgCallback(new IMsgCallback() {
+            @Override
+            public void HandleMsg(CmdInfo info, String msg) {
+                String status = info.Data.toString();
+                ConversationListFragment conversationListFragment = (ConversationListFragment) adapter.getItem(0);
+                if (status.equalsIgnoreCase("healthy")) {
+                    conversationListFragment.setErrorText(View.GONE);
+                } else {
+                    conversationListFragment.setErrorText(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void HandleError(CmdInfo info, String msg) {
+
+            }
+        });
     }
 
     @Override

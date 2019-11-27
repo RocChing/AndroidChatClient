@@ -87,6 +87,7 @@ public class NewFriendsMsgActivity extends BaseActivity {
                 boolean flag = ChatHelper.getInstance().getModel().saveContact(user);
                 if (flag) {
                     ChatHelper.getInstance().resetOnlyData();
+
                     finish();
                 } else {
                     CommonUtils.showLongToast("联系人添加失败");

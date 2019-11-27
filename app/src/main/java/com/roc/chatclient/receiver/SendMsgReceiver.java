@@ -22,7 +22,7 @@ public class SendMsgReceiver extends BroadcastReceiver {
         if (!action.equalsIgnoreCase(MsgString.SendMsg)) return;
 
         String json = intent.getStringExtra(MsgString.Default_Args);
-        Log.d("aaa", json);
+//        Log.d("aaa", json);
         if (!StringUtils.isEmpty(json)) {
             msgService.sendMsg(json);
         }

@@ -78,6 +78,14 @@ public class ChatHelper {
         msgReceiver.setMsgCallback(msgCallback);
     }
 
+    public void setSendMsgCallback(IMsgCallback sendMsgCallback) {
+        msgReceiver.setSendMsgCallback(sendMsgCallback);
+    }
+
+    public void setCheckMsgCallback(IMsgCallback checkMsgCallback) {
+        msgReceiver.setCheckMsgCallback(checkMsgCallback);
+    }
+
     public void sendMsg(CmdType type, Object data) {
         String validString = appContext.getString(R.string.validString);
         String json = JSON.toJSONString(new CmdInfo(validString, type, data));
@@ -147,6 +155,7 @@ public class ChatHelper {
 
     public synchronized void resetOnlyData() {
         contactList = null;
+        msgReceiver.setMsgCallback(null);
     }
 
     synchronized void reset() {

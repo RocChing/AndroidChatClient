@@ -14,6 +14,10 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
 
     private IMsgCallback msgCallback;
 
+    private IMsgCallback sendMsgCallback;
+
+    private IMsgCallback checkMsgCallback;
+
     public ReceiveMsgReceiver() {
 
     }
@@ -24,6 +28,14 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
 
     public void setMsgCallback(IMsgCallback callback) {
         this.msgCallback = callback;
+    }
+
+    public void setSendMsgCallback(IMsgCallback sendMsgCallback) {
+        this.sendMsgCallback = sendMsgCallback;
+    }
+
+    public void setCheckMsgCallback(IMsgCallback checkMsgCallback) {
+        this.checkMsgCallback = checkMsgCallback;
     }
 
     @Override
@@ -39,6 +51,19 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
             case Error:
                 if (msgCallback != null) {
                     msgCallback.HandleError(info, msg);
+                }
+                if (sendMsgCallback != null) {
+                    sendMsgCallback.HandleError(info, msg);
+                }
+                break;
+            case SendMsg:
+                if (sendMsgCallback != null) {
+                    sendMsgCallback.HandleMsg(info, msg);
+                }
+                break;
+            case Check:
+                if (checkMsgCallback != null) {
+                    checkMsgCallback.HandleMsg(info, msg);
                 }
                 break;
             default:

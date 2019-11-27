@@ -25,12 +25,18 @@ import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MsgService extends Service {
 
     private NioClient client;
     private String Tag = "MsgService";
     private SendMsgReceiver msgReceiver;
+
+    private String validString;
+
+    private Timer timer;
 
     public MsgService() {
 
@@ -39,6 +45,7 @@ public class MsgService extends Service {
     @Override
     public void onCreate() {
         Log.d(Tag, "onCreate");
+        validString = getString(R.string.validString);
         msgReceiver = new SendMsgReceiver(this);
         IntentFilter intentFilter = new IntentFilter(MsgString.SendMsg);
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, intentFilter);
@@ -46,11 +53,24 @@ public class MsgService extends Service {
         client = new NioClient(messageProcessor, connectListener, receiveData);
         client.setConnectAddress(new TcpAddress[]{new TcpAddress(MsgString.ServerIp, MsgString.ServerPort)});
         client.connect();
+
+        initTimer();
+    }
+
+    private void initTimer() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                sendMsg(new CmdInfo(validString, CmdType.Check, "Healthy check?"));
+            }
+        }, 1000, 60000);
     }
 
     @Override
     public void onDestroy() {
         client.disconnect();
+        timer = null;
         LocalBroadcastManager.getInstance(this).unregisterReceiver(msgReceiver);
     }
 

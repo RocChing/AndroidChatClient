@@ -1,5 +1,6 @@
 package com.roc.chatclient.ui.fragment;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,7 +29,7 @@ public class ConversationListFragment extends EaseConversationListFragment {
         errorText = errorView.findViewById(R.id.tv_connect_errormsg);
         search_bar_view.setVisibility(View.GONE);
 
-        ChatHelper.getInstance().setMsgCallback(new IMsgCallback() {
+        ChatHelper.getInstance().setSendMsgCallback(new IMsgCallback() {
             @Override
             public void HandleMsg(CmdInfo info, String msg) {
                 ReceiveMsgInfo receiveMsgInfo = info.of(ReceiveMsgInfo.class);
@@ -119,5 +120,9 @@ public class ConversationListFragment extends EaseConversationListFragment {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         getActivity().getMenuInflater().inflate(R.menu.em_delete_message, menu);
+    }
+
+    public void setErrorText(int visibility) {
+        errorItemContainer.setVisibility(visibility);
     }
 }

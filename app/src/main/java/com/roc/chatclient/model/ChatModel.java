@@ -68,8 +68,9 @@ public class ChatModel {
             conversation.setNickName(msg.getName());
             conversation.setToType(1);
             conversation.setUnreadMsgCount(msg.getUnReadCount());
+            emConversations.add(conversation);
         }
-        Log.d("bbb", "the getEMConversationList list count is:" + emConversations.size());
+//        Log.d("bbb", "the getEMConversationList list count is:" + emConversations.size());
         return emConversations;
     }
 

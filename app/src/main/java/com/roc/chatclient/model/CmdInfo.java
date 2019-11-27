@@ -1,5 +1,7 @@
 package com.roc.chatclient.model;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.roc.chatclient.util.StringUtils;
@@ -33,8 +35,13 @@ public class CmdInfo {
     }
 
     public <T> T of(Class<T> tClass) {
-        String json = getDataJson();
-        return JSON.parseObject(json, tClass);
+        try {
+            String json = getDataJson();
+            return JSON.parseObject(json, tClass);
+        } catch (Exception e) {
+            Log.d("CmdInfo", e.getMessage());
+            return null;
+        }
     }
 
     public <T> List<T> ofList(Class<T> tClass) {

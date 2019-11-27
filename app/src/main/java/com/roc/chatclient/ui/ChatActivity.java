@@ -28,7 +28,7 @@ public class ChatActivity extends BaseEaseChatActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-       // setContentView(R.layout.em_activity_chat);
+        setContentView(R.layout.em_activity_chat);
 //        activityInstance = this;
 //        //get user id or group id
 //        toChatUsername = getIntent().getExtras().getString("userId");
