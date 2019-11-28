@@ -41,6 +41,10 @@ public class EaseChatRowText extends EaseChatRow {
     }
 
     protected void handleTextMessage() {
+        if (isSendMsg()) {
+            progressBar.setVisibility(GONE);
+            statusView.setVisibility(GONE);
+        }
 //        if (message.direct() == EMMessage.Direct.SEND) {
 //            setMessageSendCallback();
 //            switch (message.status()) {
@@ -84,6 +88,4 @@ public class EaseChatRowText extends EaseChatRow {
         // TODO Auto-generated method stub
 
     }
-
-
 }

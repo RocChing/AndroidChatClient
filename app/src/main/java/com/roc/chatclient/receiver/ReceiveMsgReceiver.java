@@ -41,9 +41,16 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (!action.equals(MsgString.ReceiveMsg)) return;
-
         String msg = intent.getStringExtra(MsgString.Default_Args);
+
+        if (action.equals(MsgString.CheckMsg)) {
+            if (checkMsgCallback != null) {
+                checkMsgCallback.HandleMsg(null, msg);
+            }
+            return;
+        }
+
+        if (!action.equals(MsgString.ReceiveMsg)) return;
 
         CmdInfo info = JSON.parseObject(msg, CmdInfo.class);
         CmdType type = CmdType.getType(info.Type);
@@ -59,11 +66,6 @@ public class ReceiveMsgReceiver extends BroadcastReceiver {
             case SendMsg:
                 if (sendMsgCallback != null) {
                     sendMsgCallback.HandleMsg(info, msg);
-                }
-                break;
-            case Check:
-                if (checkMsgCallback != null) {
-                    checkMsgCallback.HandleMsg(info, msg);
                 }
                 break;
             default:

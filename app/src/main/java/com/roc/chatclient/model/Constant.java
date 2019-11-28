@@ -1,5 +1,7 @@
 package com.roc.chatclient.model;
 
+import java.net.PortUnreachableException;
+
 public class Constant {
 
     public static final String ACCOUNT_ADMIN = "adimin";
@@ -15,6 +17,8 @@ public class Constant {
     public static final int CHATTYPE_CHATROOM = 3;
     public static final String EXTRA_CHAT_TYPE = "chatType";
     public static final String EXTRA_USER_ID = "userId";
+    public static final String EXTRA_MESSAGE_COUNT = "all_count";
+    public static final String EXTRA_CHAT_TO_ID = "toId";
 
     public static final String EXTRA_CHAT_ID = "chat_id";
 
@@ -35,4 +39,7 @@ public class Constant {
     public static final String PWD = "PWD";
     public static final String TITLE = "TITLE";
     public static final String URL = "URL";
+
+    public static final String SUCCESS = "SUCCESS";
+    public static final String FAILED = "FAILED";
 }

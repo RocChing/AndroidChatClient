@@ -16,6 +16,10 @@ public class ReceiveMsgInfo {
      */
     public String ReceiveTime;
 
+    public int To;
+
+    public int ToType;
+
     /**
      * 信息类型
      */

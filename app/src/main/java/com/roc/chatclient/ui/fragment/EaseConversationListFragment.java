@@ -69,7 +69,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
         query = (EditText) getView().findViewById(R.id.query);
         // button to clear content in search bar
         clearSearch = (ImageButton) getView().findViewById(R.id.search_clear);
-        errorItemContainer = (FrameLayout) getView().findViewById(R.id.fl_error_item);
+        errorItemContainer = getView().findViewById(R.id.fl_error_item);
         search_bar_view = getView().findViewById(R.id.search_bar_view);
     }
 
@@ -140,6 +140,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
                     break;
 
                 case MSG_REFRESH: {
+                    Log.d(Tag, "MSG_REFRESH");
                     conversationList.clear();
                     conversationList.addAll(loadConversationList());
                     conversationListView.refresh();
@@ -171,40 +172,6 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     }
 
     /**
-     * load conversation list
-     *
-     * @return +
-     */
-    protected List<EMConversation> loadConversationList2() {
-        // get all conversations
-        Map<String, EMConversation> conversations = new HashMap<>(); //EMClient.getInstance().chatManager().getAllConversations();
-        List<Pair<Long, EMConversation>> sortList = new ArrayList<Pair<Long, EMConversation>>();
-        /**
-         * lastMsgTime will change if there is new message during sorting
-         * so use synchronized to make sure timestamp of last message won't change.
-         */
-        synchronized (conversations) {
-            for (EMConversation conversation : conversations.values()) {
-//                if (conversation.getAllMessages().size() != 0) {
-//                    sortList.add(new Pair<Long, EMConversation>(conversation.getLastMessage().getMsgTime(), conversation));
-//                }
-                sortList.add(new Pair<Long, EMConversation>(0l, conversation));
-            }
-        }
-        try {
-            // Internal is TimSort algorithm, has bug
-            sortConversationByLastChatTime(sortList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        List<EMConversation> list = new ArrayList<EMConversation>();
-        for (Pair<Long, EMConversation> sortItem : sortList) {
-            list.add(sortItem.second);
-        }
-        return list;
-    }
-
-    /**
      * sorting according timestamp of last message
      *
      * @param
@@ -230,7 +197,10 @@ public class EaseConversationListFragment extends EaseBaseFragment {
      * refresh ui
      */
     public void refresh() {
-        if (!handler.hasMessages(MSG_REFRESH)) {
+        boolean flag = !handler.hasMessages(MSG_REFRESH);
+        Log.d("flag", "the flag value is:" + flag);
+
+        if (flag) {
             handler.sendEmptyMessage(MSG_REFRESH);
         }
     }
@@ -247,6 +217,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         this.hidden = hidden;
+        Log.d(Tag, "onHiddenChanged the hidden value is:" + hidden);
         if (!hidden && !isConflict) {
             refresh();
         }
@@ -255,6 +226,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(Tag, "onResume the hidden value is:" + hidden);
         if (!hidden) {
             refresh();
         }

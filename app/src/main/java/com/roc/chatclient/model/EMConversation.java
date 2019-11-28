@@ -16,6 +16,16 @@ public class EMConversation {
 
     private ReceiveMsgInfo lastMsg;
 
+    private String toId;
+
+    public String getToId() {
+        return toId;
+    }
+
+    public void setToId(String toId) {
+        this.toId = toId;
+    }
+
     public int getChatId() {
         return chatId;
     }

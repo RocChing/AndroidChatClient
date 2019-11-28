@@ -32,6 +32,10 @@ import com.roc.chatclient.widget.chatrow.EaseChatRow;
 import com.roc.chatclient.widget.chatrow.EaseChatRowText;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -120,8 +124,16 @@ public class EaseMessageAdapter extends BaseAdapter {
     };
 
     public void setMessages(List<Msg> list) {
+        Collections.sort(list, msgSortById);
         messages = list.toArray(new Msg[list.size()]);
     }
+
+    private Comparator<Msg> msgSortById = new Comparator<Msg>() {
+        @Override
+        public int compare(Msg o1, Msg o2) {
+            return o1.getId() - o2.getId();
+        }
+    };
 
     public void refresh() {
         if (handler.hasMessages(HANDLER_MESSAGE_REFRESH_LIST)) {

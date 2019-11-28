@@ -3,6 +3,7 @@ package com.roc.chatclient.model;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.Tag;
 import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -10,8 +11,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
 import com.roc.chatclient.db.DbManager;
+import com.roc.chatclient.entity.ChatMsg;
 import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.receiver.IMsgCallback;
+import com.roc.chatclient.receiver.IMsgNotifyCallback;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.receiver.ReceiveMsgReceiver;
 import com.roc.chatclient.util.PreferenceManager;
@@ -38,6 +41,7 @@ public class ChatHelper {
 
     private EaseEmojiconInfoProvider emojiconInfoProvider;
     //private CallReceiver callReceiver;
+    private IMsgNotifyCallback msgNotifyCallback;
 
     private ChatHelper() {
     }
@@ -72,6 +76,7 @@ public class ChatHelper {
     private void initReceiver() {
         msgReceiver = new ReceiveMsgReceiver();
         IntentFilter filter = new IntentFilter(MsgString.ReceiveMsg);
+        filter.addAction(MsgString.CheckMsg);
         LocalBroadcastManager.getInstance(appContext).registerReceiver(msgReceiver, filter);
     }
 
@@ -104,11 +109,25 @@ public class ChatHelper {
         return demoModel;
     }
 
+    public void sendMsg(Msg info, String json) {
+        if (msgNotifyCallback != null) {
+            msgNotifyCallback.HandleMsg(info, json);
+        }
+    }
+
+    public void setMsgNotifyCallback(IMsgNotifyCallback msgNotifyCallback) {
+        this.msgNotifyCallback = msgNotifyCallback;
+    }
+
     /**
      * get current user's id
      */
     public String getCurrentUserName() {
         return demoModel.getCurrentUserName();
+    }
+
+    public int getCurrentUserId() {
+        return demoModel.getCurrentUserId();
     }
 
     public boolean isLogin() {
@@ -122,19 +141,21 @@ public class ChatHelper {
      * @return
      */
     public Map<String, UserExtInfo> getContactList() {
-        if (isLogin() && contactList == null) {
-            contactList = demoModel.getContactList();
-        }
-
-        // return a empty non-null object to avoid app crash
-        if (contactList == null) {
+        if (!isLogin()) {
             contactList = new Hashtable<String, UserExtInfo>();
+            return contactList;
+        }
+        // return a empty non-null object to avoid app crash
+        if (contactList == null || contactList.size() < 1) {
+            contactList = demoModel.getContactList();
         }
 
         //add me
         UserExtInfo user = PreferenceManager.getInstance().getCurrentUser();
-        if (!contactList.containsKey(user.Name)) {
-            contactList.put(user.Name, user);
+        if (!StringUtils.isEmpty(user.Name)) {
+            if (!contactList.containsKey(user.Name)) {
+                contactList.put(user.Name, user);
+            }
         }
         return contactList;
     }
@@ -156,8 +177,28 @@ public class ChatHelper {
         return demoModel.getChatMsgList(pageIndex, pageSize, chatId);
     }
 
-    public void saveMsg(ReceiveMsgInfo info) {
+    public Msg saveMsg(ReceiveMsgInfo info) {
+        return demoModel.saveMsg(info);
+    }
+
+    public void saveMsg(int chatId, MsgInfo info) {
+        demoModel.saveMsg(chatId, info);
+    }
+
+    public void saveMsg(Msg info) {
         demoModel.saveMsg(info);
+    }
+
+    public ChatMsg saveChat(UserExtInfo user) {
+        return demoModel.saveChat(user);
+    }
+
+    public void deleteChat(int chatId) {
+        demoModel.deleteChat(chatId);
+    }
+
+    public void setMsgRead(int chatId) {
+        demoModel.setMsgRead(chatId);
     }
 
     public synchronized void resetData() {

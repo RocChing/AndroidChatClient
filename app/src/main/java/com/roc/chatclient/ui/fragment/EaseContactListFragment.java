@@ -103,7 +103,6 @@ public class EaseContactListFragment extends EaseBaseFragment {
 
         if (listItemClickListener != null) {
             listView.setOnItemClickListener(new OnItemClickListener() {
-
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     UserExtInfo user = (UserExtInfo) listView.getItemAtPosition(position);

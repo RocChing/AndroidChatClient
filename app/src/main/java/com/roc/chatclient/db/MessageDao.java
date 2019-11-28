@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.roc.chatclient.entity.ChatMsg;
 import com.roc.chatclient.entity.Msg;
+import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.ReceiveMsgInfo;
+import com.roc.chatclient.model.UserExtInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,15 +89,30 @@ public class MessageDao {
         if (db.isOpen()) {
             db.insert(TABLE_NAME, null, values);
 
+            int id = 0;
+            Cursor cursor = db.rawQuery("select last_insert_rowid() from " + TABLE_NAME, null);
+            if (cursor.moveToFirst()) {
+                id = cursor.getInt(0);
+            }
+            msg.setId(id);
+
             if (update) {
-                String sql = "update " + CHAT_TABLE_TABLE + " set all_count=all_count+1,un_read_count=un_read_count+1,last_msg='" + msg.getContent() + "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
+                String sql = "update " + CHAT_TABLE_TABLE + " set ";
+                int userId = ChatHelper.getInstance().getCurrentUserId();
+                if (userId == msg.getSender()) {
+                    sql += "all_count=0, un_read_count=0,";
+                } else {
+                    sql += "all_count=all_count+1, un_read_count=un_read_count+1,";
+                }
+                sql += " last_msg='" + msg.getContent() + "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
+                Log.d(Tag, "the sql is:" + sql);
                 db.execSQL(sql);
 //                Log.d(Tag, "the update chat_list");
             }
         }
     }
 
-    public void saveMsg(ReceiveMsgInfo info) {
+    public Msg saveMsg(ReceiveMsgInfo info) {
         DbOpenHelper dbOpenHelper = getDbHelper();
         SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
         int id = 0;
@@ -139,11 +156,58 @@ public class MessageDao {
         msg.setChatId(id);
 //        Log.d(Tag, "the update value is:" + update);
         saveMsg(msg, update);
+        return msg;
+    }
+
+    public ChatMsg saveChat(UserExtInfo user) {
+        DbOpenHelper dbOpenHelper = getDbHelper();
+        SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
+        int id = 0;
+        ChatMsg msg = new ChatMsg();
+        if (db.isOpen()) {
+            String sql_query = "select * from " + CHAT_TABLE_TABLE + " where to_id=?";
+            Cursor cursor = db.rawQuery(sql_query, new String[]{user.Id + ""});
+            if (cursor.moveToFirst()) {
+                id = cursor.getInt(cursor.getColumnIndex("id"));
+                msg.setId(id);
+                msg.setAllCount(cursor.getInt(cursor.getColumnIndex("all_count")));
+            }
+            cursor.close();
+        }
+        if (id == 0) {
+            msg.setAllCount(0);
+            SQLiteDatabase db_insert = dbOpenHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("all_count", 0);
+            values.put("un_read_count", 0);
+            values.put("avatar", user.Avatar);
+            values.put("last_msg", "");
+            values.put("last_msg_time", "");
+            values.put("name", user.Name);
+            values.put("to_id", user.Id);
+            if (db_insert.isOpen()) {
+                db_insert.insert(CHAT_TABLE_TABLE, null, values);
+
+                Cursor cursor = db.rawQuery("select last_insert_rowid() from " + CHAT_TABLE_TABLE, null);
+                if (cursor.moveToFirst()) {
+                    id = cursor.getInt(0);
+                    msg.setId(id);
+                }
+            }
+        }
+        return msg;
     }
 
     public void deleteChat(int chatId) {
         SQLiteDatabase db = getDbHelper().getWritableDatabase();
         db.execSQL("delete from " + CHAT_TABLE_TABLE + " where id=?", new Object[]{chatId});
         db.execSQL("delete from " + TABLE_NAME + " where chat_id=?", new Object[]{chatId});
+    }
+
+    public void setMsgRead(int chatId) {
+        ContentValues values = new ContentValues();
+        values.put("un_read_count", 0);
+        SQLiteDatabase db = getDbHelper().getWritableDatabase();
+        db.update(CHAT_TABLE_TABLE, values, "id=?", new String[]{chatId + ""});
     }
 }

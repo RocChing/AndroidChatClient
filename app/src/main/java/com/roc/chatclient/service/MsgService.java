@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.CmdType;
+import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.receiver.SendMsgReceiver;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.socket.impl.tcp.IReceiveData;
@@ -62,9 +63,16 @@ public class MsgService extends Service {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                sendMsg(new CmdInfo(validString, CmdType.Check, "Healthy check?"));
+                if (!client.isConnected()) {
+                    connectListener.onConnectionFailed();
+                    client.connect();
+                    return;
+                } else {
+                    connectListener.onConnectionSuccess();
+                }
+                sendCheckMsg();
             }
-        }, 1000, 60000);
+        }, 1000, 10000);
     }
 
     @Override
@@ -124,15 +132,26 @@ public class MsgService extends Service {
         @Override
         public void onConnectionSuccess() {
             Log.i(Tag, "connected server success");
-
-            int id = PreferenceManager.getInstance().getCurrentUserId();
-            String validString = getString(R.string.validString);
-            sendMsg(new CmdInfo(validString, CmdType.LoginById, id));
+            sendLocalCheckMsg(Constant.SUCCESS);
         }
 
         @Override
         public void onConnectionFailed() {
             Log.i(Tag, "connected server failed");
+            sendLocalCheckMsg(Constant.FAILED);
         }
     };
+
+    private void sendCheckMsg() {
+        int id = PreferenceManager.getInstance().getCurrentUserId();
+        String validString = getString(R.string.validString);
+        sendMsg(new CmdInfo(validString, CmdType.Check, id));
+    }
+
+    private void sendLocalCheckMsg(String result) {
+        Intent intent = new Intent();
+        intent.setAction(MsgString.CheckMsg);
+        intent.putExtra(MsgString.Default_Args, result);
+        LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+    }
 }

@@ -29,7 +29,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     private static final String USERNAME_TABLE_CREATE = "CREATE TABLE "
             + UserDao.TABLE_NAME + " ("
             + UserDao.COLUMN_NAME_NICK + " TEXT, "
-            + UserDao.COLUMN_NAME_AVATAR + " TEXT, "
+            + UserDao.COLUMN_NAME_AVATAR + " TEXT, " +
+              UserDao.COLUMN_ID+ " INTEGER ,"
             + UserDao.COLUMN_NAME_ID + " TEXT PRIMARY KEY);";
 
     private static final String INIVTE_MESSAGE_TABLE_CREATE = "CREATE TABLE "
@@ -89,7 +90,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     }
 
     private static String getUserDatabaseName() {
-        String name = ChatHelper.getInstance().getCurrentUserName() + "_demo.db";
+        String name = ChatHelper.getInstance().getCurrentUserName() + "_chat.db";
         Log.d(Tag, "the db name is:" + name);
         return name;
     }

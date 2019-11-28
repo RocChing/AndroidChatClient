@@ -55,6 +55,8 @@ public class DbManager {
                     values.put(UserDao.COLUMN_NAME_NICK, user.NickName);
                 if (user.Avatar != null)
                     values.put(UserDao.COLUMN_NAME_AVATAR, user.Avatar);
+                if (user.Id > 0)
+                    values.put(UserDao.COLUMN_ID, user.Id);
                 db.replace(UserDao.TABLE_NAME, null, values);
             }
         }
@@ -71,6 +73,7 @@ public class DbManager {
         if (db.isOpen()) {
             Cursor cursor = db.rawQuery("select * from " + UserDao.TABLE_NAME /* + " desc" */, null);
             while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndex(UserDao.COLUMN_ID));
                 String username = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_ID));
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));
                 String avatar = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_AVATAR));
@@ -78,6 +81,8 @@ public class DbManager {
 
                 user.NickName = nick;
                 user.Avatar = avatar;
+                user.Name = username;
+                user.Id = id;
                 if (username.equals(Constant.NEW_FRIENDS_USERNAME) || username.equals(Constant.GROUP_USERNAME)
                         || username.equals(Constant.CHAT_ROOM) || username.equals(Constant.CHAT_ROBOT)) {
                     user.setInitialLetter("");
@@ -116,6 +121,9 @@ public class DbManager {
             values.put(UserDao.COLUMN_NAME_NICK, user.NickName);
         if (user.Avatar != null)
             values.put(UserDao.COLUMN_NAME_AVATAR, user.Avatar);
+        if (user.Id > 0) {
+            values.put(UserDao.COLUMN_ID, user.Id);
+        }
         if (db.isOpen()) {
             db.replace(UserDao.TABLE_NAME, null, values);
         }

@@ -76,6 +76,10 @@ public abstract class EaseChatRow extends LinearLayout {
         onFindViewById();
     }
 
+    protected boolean isSendMsg() {
+        return message.getSender() == currentUserId;
+    }
+
     /**
      * set property according message and postion
      *
@@ -114,12 +118,11 @@ public abstract class EaseChatRow extends LinearLayout {
 
         int sender = message.getSender();
         //set nickname and avatar
-        if (currentUserId == sender) {
+        if (isSendMsg()) {
             // EaseUserUtils.setUserAvatar(context, EMClient.getInstance().getCurrentUser(), userAvatarView);
         } else {
             // EaseUserUtils.setUserAvatar(context, message.getFrom(), userAvatarView);
             //EaseUserUtils.setUserNick(message.getSender(), usernickView);
-
             usernickView.setText(sender + "");
         }
 
@@ -143,7 +146,7 @@ public abstract class EaseChatRow extends LinearLayout {
 //            }
 //        }
         if (ackedView != null) {
-            ackedView.setVisibility(View.VISIBLE);
+            ackedView.setVisibility(View.INVISIBLE);
         }
 
 

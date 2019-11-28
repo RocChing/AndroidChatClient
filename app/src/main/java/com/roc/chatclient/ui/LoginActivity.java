@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                 preferenceManager.setCurrentUser(user);
 
                 MFGT.goActivity(HomeActivity.class);
+                finish();
             }
 
             @Override

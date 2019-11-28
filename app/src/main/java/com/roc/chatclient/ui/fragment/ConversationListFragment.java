@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.roc.chatclient.R;
 import com.roc.chatclient.db.InviteMessageDao;
+import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.Constant;
@@ -32,12 +33,15 @@ public class ConversationListFragment extends EaseConversationListFragment {
         errorText = errorView.findViewById(R.id.tv_connect_errormsg);
         search_bar_view.setVisibility(View.GONE);
 
-        ChatHelper.getInstance().setSendMsgCallback(new IMsgCallback() {
+        final ChatHelper chatHelper = ChatHelper.getInstance();
+
+        chatHelper.setSendMsgCallback(new IMsgCallback() {
             @Override
-            public void HandleMsg(CmdInfo info, String msg) {
+            public void HandleMsg(CmdInfo info, String json) {
                 ReceiveMsgInfo receiveMsgInfo = info.of(ReceiveMsgInfo.class);
-                ChatHelper.getInstance().saveMsg(receiveMsgInfo);
+                Msg msg = chatHelper.saveMsg(receiveMsgInfo);
                 handler.sendEmptyMessage(2);
+                chatHelper.sendMsg(msg, json);
             }
 
             @Override
@@ -60,22 +64,15 @@ public class ConversationListFragment extends EaseConversationListFragment {
                 String username = conversation.getName();
                 String currentUserName = ChatHelper.getInstance().getCurrentUserName();
 
-                if (username.equals(currentUserName))
+                if (currentUserName.equalsIgnoreCase(username))
                     Toast.makeText(getActivity(), R.string.Cant_chat_with_yourself, Toast.LENGTH_LONG).show();
                 else {
                     // 进入聊天页面
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
-//                    if(conversation.isGroup()){
-//                        if(conversation.getType() == EMConversationType.ChatRoom){
-//                            // it's group chat
-//                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_CHATROOM);
-//                        }else{
-//                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_GROUP);
-//                        }
-//                    }
-                    // it's single chat
                     intent.putExtra(Constant.EXTRA_CHAT_ID, conversation.getChatId());
                     intent.putExtra(Constant.EXTRA_USER_ID, username);
+                    intent.putExtra(Constant.EXTRA_MESSAGE_COUNT, conversation.getAllMsgCount());
+                    intent.putExtra(Constant.EXTRA_CHAT_TO_ID, conversation.getToId());
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.push_left_in,
                             R.anim.push_left_out);
@@ -97,10 +94,8 @@ public class ConversationListFragment extends EaseConversationListFragment {
             return true;
         }
         try {
-            // 删除此会话
-            // EMClient.getInstance().chatManager().deleteConversation(tobeDeleteCons.getUserName(), deleteMessage);
-            InviteMessageDao inviteMessgeDao = new InviteMessageDao(getActivity());
-            inviteMessgeDao.deleteMessage(tobeDeleteCons.getName());
+            int chatId = tobeDeleteCons.getChatId();
+            ChatHelper.getInstance().deleteChat(chatId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,6 +122,8 @@ public class ConversationListFragment extends EaseConversationListFragment {
     }
 
     public void setErrorText(int visibility) {
-        errorItemContainer.setVisibility(visibility);
+        if (errorItemContainer != null) {
+            errorItemContainer.setVisibility(visibility);
+        }
     }
 }

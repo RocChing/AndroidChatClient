@@ -14,13 +14,15 @@ import androidx.annotation.NonNull;
 //import com.hyphenate.easeui.ui.EaseChatFragment;
 //import com.hyphenate.util.EasyUtils;
 import com.roc.chatclient.R;
+import com.roc.chatclient.entity.Msg;
+import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.receiver.IMsgNotifyCallback;
 import com.roc.chatclient.ui.fragment.ChatFragment;
 import com.roc.chatclient.ui.fragment.EaseChatFragment;
 import com.roc.chatclient.util.MFGT;
 
 /**
  * chat activity，EaseChatFragment was used {@link # }
- *
  */
 public class ChatActivity extends BaseEaseChatActivity {
     public static ChatActivity activityInstance;
@@ -39,17 +41,24 @@ public class ChatActivity extends BaseEaseChatActivity {
 //        //pass parameters to chat fragment
         chatFragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction().add(R.id.container, chatFragment).commit();
+
+        ChatHelper.getInstance().setMsgNotifyCallback(new IMsgNotifyCallback() {
+            @Override
+            public void HandleMsg(Msg msg, String originJson) {
+                chatFragment.refresh(msg);
+            }
+        });
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         activityInstance = null;
     }
-    
+
     @Override
     protected void onNewIntent(Intent intent) {
-    	// make sure only one chat activity is opened
+        // make sure only one chat activity is opened
         String username = intent.getStringExtra("userId");
         if (toChatUsername.equals(username))
             super.onNewIntent(intent);
@@ -57,9 +66,8 @@ public class ChatActivity extends BaseEaseChatActivity {
             finish();
             startActivity(intent);
         }
-
     }
-    
+
     @Override
     public void onBackPressed() {
         chatFragment.onBackPressed();
@@ -67,10 +75,11 @@ public class ChatActivity extends BaseEaseChatActivity {
 //            Intent intent = new Intent(this, HomeActivity.class);
 //            startActivity(intent);
 //        }
+        ChatHelper.getInstance().setMsgNotifyCallback(null);
         MFGT.finish(this);
     }
-    
-    public String getToChatUsername(){
+
+    public String getToChatUsername() {
         return toChatUsername;
     }
 

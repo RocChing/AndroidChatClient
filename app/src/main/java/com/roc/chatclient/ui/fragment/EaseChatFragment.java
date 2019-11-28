@@ -18,14 +18,24 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.CmdInfo;
+import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.model.EaseEmojicon;
+import com.roc.chatclient.model.MsgInfo;
+import com.roc.chatclient.model.MsgToType;
+import com.roc.chatclient.model.MsgType;
+import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.util.CommonUtils;
+import com.roc.chatclient.util.DateUtils;
+import com.roc.chatclient.util.StringUtils;
 import com.roc.chatclient.widget.EaseChatInputMenu;
 import com.roc.chatclient.widget.EaseChatMessageList;
 import com.roc.chatclient.R;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
+import java.util.Date;
 import java.util.List;
 
 public class EaseChatFragment extends EaseBaseFragment {
@@ -45,13 +55,18 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     private ChatHelper chatHelper;
 
-    protected boolean isloading;
+    //    protected boolean isloading;
     protected boolean haveMoreData = true;
-    protected int pagesize = 20;
+    protected int pageSize = 10;
+    protected int allPages = 0;
+    protected int currentPageIndex = 1;
+    protected int chatId;
 
-    private int chatId;
-
+    protected int currentUserId = 0;
+    protected int toId = 0;
     private String Tag = "EaseChatFragment";
+
+    protected List<Msg> msgList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,8 +83,19 @@ public class EaseChatFragment extends EaseBaseFragment {
         //聊天id
         chatId = fragmentArgs.getInt(Constant.EXTRA_CHAT_ID);
 
+        String toIdString = fragmentArgs.getString(Constant.EXTRA_CHAT_TO_ID);
+
+        if (!StringUtils.isEmpty(toIdString)) {
+            toId = Integer.parseInt(toIdString);
+        }
+
+        int allMsgCount = fragmentArgs.getInt(Constant.EXTRA_MESSAGE_COUNT);
+        allPages = (allMsgCount + pageSize - 1) / pageSize;
+
         Log.d(Tag, "the chat id is:" + chatId);
         chatHelper = ChatHelper.getInstance();
+
+        currentUserId = chatHelper.getCurrentUserId();
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -175,8 +201,10 @@ public class EaseChatFragment extends EaseBaseFragment {
 //            forwardMessage(forward_msg_id);
         }
 
-        List<Msg> list = chatHelper.getChatMsgList(1, pagesize, chatId);
-        messageList.setList(list);
+        msgList = chatHelper.getChatMsgList(currentPageIndex, pageSize, chatId);
+        messageList.setList(msgList);
+
+        chatHelper.setMsgRead(chatId);//设为已读
     }
 
     protected void setRefreshLayoutListener() {
@@ -188,11 +216,21 @@ public class EaseChatFragment extends EaseBaseFragment {
 
                     @Override
                     public void run() {
-                        if (listView.getFirstVisiblePosition() == 0 && !isloading && haveMoreData) {
+                        if (listView.getFirstVisiblePosition() == 0 && haveMoreData) {
                             List<Msg> messages = null;
+                            Log.d(Tag, "refresh message ....");
+                            if (currentPageIndex < allPages) {
+                                currentPageIndex++;
+                            } else {
+                                currentPageIndex = 1;
+                                Toast.makeText(getActivity(), getResources().getString(R.string.no_more_messages),
+                                        Toast.LENGTH_SHORT).show();
+                                swipeRefreshLayout.setRefreshing(false);
+                                return;
+                            }
                             try {
                                 if (chatType == Constant.CHATTYPE_SINGLE) {
-                                    messages = chatHelper.getChatMsgList(1, pagesize, chatId);
+                                    messages = chatHelper.getChatMsgList(currentPageIndex, pageSize, chatId);
                                 }
 //                                else {
 //                                    messages = conversation.loadMoreMsgFromDB(messageList.getItem(0).getMsgId(),
@@ -203,19 +241,14 @@ public class EaseChatFragment extends EaseBaseFragment {
                                 return;
                             }
                             if (messages != null && messages.size() > 0) {
-                                messageList.refreshSeekTo(messages.size() - 1);
-                                if (messages.size() != pagesize) {
+                                msgList.addAll(messages);
+                                messageList.setList(msgList);
+                                int position = 0;
+                                messageList.refreshSeekTo(position);
+                                if (messages.size() != pageSize) {
                                     haveMoreData = false;
                                 }
-                            } else {
-                                haveMoreData = false;
                             }
-
-                            isloading = false;
-
-                        } else {
-                            Toast.makeText(getActivity(), getResources().getString(R.string.no_more_messages),
-                                    Toast.LENGTH_SHORT).show();
                         }
                         swipeRefreshLayout.setRefreshing(false);
                     }
@@ -243,6 +276,23 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     protected void sendTextMessage(String content) {
         Log.d(Tag, "the input msg is:" + content);
+        if (toId < 1) {
+            Log.w(Tag, "the to id is:" + toId);
+            return;
+        }
+        MsgInfo info = new MsgInfo(content, MsgType.Text, currentUserId, toId, MsgToType.User);
+
+        Msg msg = new Msg();
+        msg.setChatId(chatId);
+        msg.setContent(info.Msg);
+        msg.setSender(info.From);
+        msg.setSendTime(DateUtils.getFormatDate(new Date()));
+        msg.setType(info.Type);
+
+        chatHelper.saveMsg(msg);
+        chatHelper.sendMsg(CmdType.SendMsg, info);
+
+        refresh(msg);
     }
 
     protected void emptyHistory() {
@@ -257,6 +307,12 @@ public class EaseChatFragment extends EaseBaseFragment {
 //                }
 //            }
 //        }, true).show();;
+    }
+
+    public void refresh(Msg msg) {
+        msgList.add(msg);
+        messageList.setList(msgList);
+        messageList.refreshSelectLast();
     }
 
     /**

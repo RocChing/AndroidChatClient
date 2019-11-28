@@ -7,10 +7,12 @@ import com.roc.chatclient.db.MessageDao;
 import com.roc.chatclient.entity.ChatMsg;
 import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.entity.User;
+import com.roc.chatclient.util.DateUtils;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.db.UserDao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,10 @@ public class ChatModel {
         return PreferenceManager.getInstance().getCurrentUsername();
     }
 
+    public int getCurrentUserId() {
+        return PreferenceManager.getInstance().getCurrentUserId();
+    }
+
     public List<EMConversation> getEMConversationList() {
         List<ChatMsg> list = messageDao.getChatList();
         List<EMConversation> emConversations = new ArrayList<>();
@@ -70,6 +76,7 @@ public class ChatModel {
             conversation.setToType(1);
             conversation.setUnreadMsgCount(msg.getUnReadCount());
             conversation.setChatId(msg.getId());
+            conversation.setToId(msg.getToId());
             emConversations.add(conversation);
         }
 //        Log.d("bbb", "the getEMConversationList list count is:" + emConversations.size());
@@ -80,8 +87,34 @@ public class ChatModel {
         return messageDao.getChatMsgList(pageIndex, pageSize, chatId);
     }
 
-    public void saveMsg(ReceiveMsgInfo info) {
+    public Msg saveMsg(ReceiveMsgInfo info) {
+        return messageDao.saveMsg(info);
+    }
+
+    public void saveMsg(int chatId, MsgInfo info) {
+        Msg msg = new Msg();
+        msg.setChatId(chatId);
+        msg.setContent(info.Msg);
+        msg.setSender(info.From);
+        msg.setSendTime(DateUtils.getFormatDate(new Date()));
+        msg.setType(info.Type);
+        messageDao.saveMsg(msg);
+    }
+
+    public ChatMsg saveChat(UserExtInfo user) {
+        return messageDao.saveChat(user);
+    }
+
+    public void saveMsg(Msg info) {
         messageDao.saveMsg(info);
+    }
+
+    public void setMsgRead(int chatId) {
+        messageDao.setMsgRead(chatId);
+    }
+
+    public void deleteChat(int chatId) {
+        messageDao.deleteChat(chatId);
     }
 //    public Map<String, RobotUser> getRobotList(){
 //        UserDao dao = new UserDao(context);

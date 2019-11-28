@@ -30,9 +30,15 @@ import android.widget.Toast;
 import com.roc.chatclient.R;
 import com.roc.chatclient.db.InviteMessageDao;
 import com.roc.chatclient.db.UserDao;
+import com.roc.chatclient.entity.ChatMsg;
+import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.Constant;
+import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.ui.ChatActivity;
 import com.roc.chatclient.ui.NewFriendsMsgActivity;
+import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.ContactItemView;
 import com.roc.chatclient.widget.EmptyLayout;
@@ -100,18 +106,20 @@ public class ContactListFragment extends EaseContactListFragment {
             m = (Map<String, UserExtInfo>) ((Hashtable<String, UserExtInfo>) m).clone();
         }
         setContactsMap(m);
-        super.setUpView();
-        listView.setOnItemClickListener(new OnItemClickListener() {
+        setContactListItemClickListener(listItemClickListener);
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String username = ((UserExtInfo) listView.getItemAtPosition(position)).Name;
-                // demo中直接进入聊天页面，实际一般是进入用户详情页
-                //   startActivity(new Intent(getActivity(), ChatActivity.class).putExtra(EaseConstant.EXTRA_USER_ID, username));
-//                getActivity().overridePendingTransition(R.anim.push_left_in,
-//                        R.anim.push_left_out);
-            }
-        });
+        super.setUpView();
+//        listView.setOnItemClickListener(new OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String username = ((UserExtInfo) listView.getItemAtPosition(position)).Name;
+//                // demo中直接进入聊天页面，实际一般是进入用户详情页
+//                //   startActivity(new Intent(getActivity(), ChatActivity.class).putExtra(EaseConstant.EXTRA_USER_ID, username));
+////                getActivity().overridePendingTransition(R.anim.push_left_in,
+////                        R.anim.push_left_out);
+//            }
+//        });
 
 
 //        contactSyncListener = new ContactSyncListener();
@@ -129,6 +137,27 @@ public class ContactListFragment extends EaseContactListFragment {
 //            emptyLayout.showLoading();
 //        }
     }
+
+    private EaseContactListItemClickListener listItemClickListener = new EaseContactListItemClickListener() {
+        @Override
+        public void onListItemClicked(UserExtInfo user) {
+            int userId = ChatHelper.getInstance().getCurrentUserId();
+            if (userId == user.Id) {
+                String tip = getString(R.string.Cant_chat_with_yourself);
+                CommonUtils.showLongToast(tip);
+                return;
+            }
+            ChatMsg msg = ChatHelper.getInstance().saveChat(user);
+            Intent intent = new Intent(getActivity(), ChatActivity.class);
+            intent.putExtra(Constant.EXTRA_CHAT_ID, msg.getId());
+            intent.putExtra(Constant.EXTRA_USER_ID, user.Name);
+            intent.putExtra(Constant.EXTRA_MESSAGE_COUNT, msg.getAllCount());
+            intent.putExtra(Constant.EXTRA_CHAT_TO_ID, user.Id + "");
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.push_left_in,
+                    R.anim.push_left_out);
+        }
+    };
 
     private void addMe(Map<String, UserExtInfo> map) {
         // TODO del

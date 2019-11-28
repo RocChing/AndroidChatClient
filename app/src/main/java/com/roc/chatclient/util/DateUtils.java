@@ -12,6 +12,15 @@ public class DateUtils {
     public DateUtils() {
     }
 
+    public static String getFormatDate(Date date, String format) {
+        SimpleDateFormat sdp = new SimpleDateFormat(format);
+        return sdp.format(date);
+    }
+
+    public static String getFormatDate(Date date) {
+        return getFormatDate(date, "yyyy-MM-dd HH:mm:ss");
+    }
+
     public static String getTimestampString(Date var0) {
         String var1 = null;
         String var2 = Locale.getDefault().getLanguage();

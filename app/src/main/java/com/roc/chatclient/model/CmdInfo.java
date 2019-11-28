@@ -39,7 +39,7 @@ public class CmdInfo {
             String json = getDataJson();
             return JSON.parseObject(json, tClass);
         } catch (Exception e) {
-            Log.d("CmdInfo", e.getMessage());
+            Log.e("CmdInfo", e.getMessage());
             return null;
         }
     }

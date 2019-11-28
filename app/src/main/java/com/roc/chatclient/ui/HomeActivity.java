@@ -5,6 +5,7 @@ import com.roc.chatclient.adapter.MainTabAdpter;
 import com.roc.chatclient.db.InviteMessageDao;
 import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
+import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.ui.fragment.ContactListFragment;
@@ -19,6 +20,7 @@ import com.roc.chatclient.widget.MFViewPager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,6 +31,7 @@ import java.util.TimerTask;
 
 public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedChangeListener, ViewPager.OnPageChangeListener {
 
+    private String Tag = "HomeActivity";
     private MainTabAdpter adapter;
     private int keyBackClickCount = 0;
     private int PageIndex = 0;
@@ -76,10 +79,10 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
 
         ChatHelper.getInstance().setCheckMsgCallback(new IMsgCallback() {
             @Override
-            public void HandleMsg(CmdInfo info, String msg) {
-                String status = info.Data.toString();
+            public void HandleMsg(CmdInfo info, String status) {
+                //String status = info.Data.toString();
                 ConversationListFragment conversationListFragment = (ConversationListFragment) adapter.getItem(0);
-                if (status.equalsIgnoreCase("healthy")) {
+                if (status.equalsIgnoreCase(Constant.SUCCESS)) {
                     conversationListFragment.setErrorText(View.GONE);
                 } else {
                     conversationListFragment.setErrorText(View.VISIBLE);
@@ -96,11 +99,16 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     @Override
     protected void onRestart() {
         super.onRestart();
+        Log.d(Tag, "onRestart the PageIndex is:" + PageIndex);
 
-        if (PageIndex == 2) {
-            ContactListFragment fragment = (ContactListFragment) adapter.getItem(PageIndex);
-            fragment.refresh();
-        }
+       // refreshMsg();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(Tag, "onResume the PageIndex is:" + PageIndex);
+        //refreshMsg();
     }
 
     @Override
@@ -170,6 +178,12 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
                 txt_title.setText(getString(R.string.me));
                 break;
         }
+    }
+
+    private void refreshMsg() {
+        ChatHelper.getInstance().resetOnlyData();
+        ConversationListFragment fragment = (ConversationListFragment) adapter.getItem(0);
+        fragment.refresh();
     }
 
     /**
