@@ -39,9 +39,12 @@ public class ConversationListFragment extends EaseConversationListFragment {
             @Override
             public void HandleMsg(CmdInfo info, String json) {
                 ReceiveMsgInfo receiveMsgInfo = info.of(ReceiveMsgInfo.class);
-                Msg msg = chatHelper.saveMsg(receiveMsgInfo);
-                handler.sendEmptyMessage(2);
-                chatHelper.sendMsg(msg, json);
+                String userName = receiveMsgInfo.From.Name;
+                if (chatHelper.isFriendUser(userName)) {
+                    Msg msg = chatHelper.saveMsg(receiveMsgInfo);
+                    handler.sendEmptyMessage(2);
+                    chatHelper.sendMsg(msg, json);
+                }
             }
 
             @Override

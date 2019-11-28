@@ -160,6 +160,14 @@ public class ChatHelper {
         return contactList;
     }
 
+    public boolean isFriendUser(String userName) {
+        if (contactList != null) {
+            if (StringUtils.isEmpty(userName)) return false;
+            return contactList.containsKey(userName);
+        }
+        return false;
+    }
+
     public UserExtInfo getUserInfo(String name) {
         if (contactList != null) {
             if (contactList.containsKey(name)) {

@@ -97,12 +97,12 @@ public class MessageDao {
             msg.setId(id);
 
             if (update) {
-                String sql = "update " + CHAT_TABLE_TABLE + " set ";
+                String sql = "update " + CHAT_TABLE_TABLE + " set all_count=all_count+1,";
                 int userId = ChatHelper.getInstance().getCurrentUserId();
                 if (userId == msg.getSender()) {
-                    sql += "all_count=0, un_read_count=0,";
+                    sql += " un_read_count=0,";
                 } else {
-                    sql += "all_count=all_count+1, un_read_count=un_read_count+1,";
+                    sql += " un_read_count=un_read_count+1,";
                 }
                 sql += " last_msg='" + msg.getContent() + "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
                 Log.d(Tag, "the sql is:" + sql);
