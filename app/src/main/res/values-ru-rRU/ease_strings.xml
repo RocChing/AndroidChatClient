@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="attach_red_packet">Red Packet</string>
     <string name="text_ack_msg">Прочитанные</string>
     <string name="text_delivered_msg">Переданные</string>
     <string name="back">Назад</string>

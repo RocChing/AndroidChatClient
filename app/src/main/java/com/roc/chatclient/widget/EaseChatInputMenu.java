@@ -132,35 +132,32 @@ public class EaseChatInputMenu extends LinearLayout {
 //    }
 
 
-//    /**
-//     * register menu item
-//     *
-//     * @param name        item name
-//     * @param drawableRes background of item
-//     * @param itemId      id
-//     * @param listener    on click event of item
-//     */
-//    public void registerExtendMenuItem(String name, int drawableRes, int itemId,
-//                                       EaseChatExtendMenuItemClickListener listener) {
-//        chatExtendMenu.registerMenuItem(name, drawableRes, itemId, listener);
-//    }
+    /**
+     * register menu item
+     *
+     * @param name        item name
+     * @param drawableRes background of item
+     * @param itemId      id
+     * @param listener    on click event of item
+     */
+    public void registerExtendMenuItem(String name, int drawableRes, int itemId,
+                                       EaseChatExtendMenu.EaseChatExtendMenuItemClickListener listener) {
+        chatExtendMenu.registerMenuItem(name, drawableRes, itemId, listener);
+    }
 
-    //    /**
-//     * register menu item
-//     *
-//     * @param nameRes
-//     *            resource id of item name
-//     * @param drawableRes
-//     *            background of item
-//     * @param itemId
-//     *             id
-//     * @param listener
-//     *            on click event of item
-//     */
-//    public void registerExtendMenuItem(int nameRes, int drawableRes, int itemId,
-//            EaseChatExtendMenuItemClickListener listener) {
-//        chatExtendMenu.registerMenuItem(nameRes, drawableRes, itemId, listener);
-//    }
+    /**
+     * register menu item
+     *
+     * @param nameRes     resource id of item name
+     * @param drawableRes background of item
+     * @param itemId      id
+     * @param listener    on click event of item
+     */
+    public void registerExtendMenuItem(int nameRes, int drawableRes, int itemId,
+                                       EaseChatExtendMenu.EaseChatExtendMenuItemClickListener listener) {
+        chatExtendMenu.registerMenuItem(nameRes, drawableRes, itemId, listener);
+    }
+
     protected void processChatMenu() {
         // send message button
         chatPrimaryMenu.setChatPrimaryMenuListener(new EaseChatPrimaryMenuBase.EaseChatPrimaryMenuListener() {
@@ -178,7 +175,7 @@ public class EaseChatInputMenu extends LinearLayout {
 
             @Override
             public void onToggleExtendClicked() {
-//                toggleMore();
+                toggleMore();
             }
 
             @Override
@@ -237,27 +234,32 @@ public class EaseChatInputMenu extends LinearLayout {
 
     /**
      * show or hide extend menu
-     *
      */
-//    protected void toggleMore() {
-//        if (chatExtendMenuContainer.getVisibility() == View.GONE) {
-//            hideKeyboard();
-//            handler.postDelayed(new Runnable() {
-//                public void run() {
-//                    chatExtendMenuContainer.setVisibility(View.VISIBLE);
-//                    chatExtendMenu.setVisibility(View.VISIBLE);
+    protected void toggleMore() {
+        if (chatExtendMenuContainer.getVisibility() == View.GONE) {
+            hideKeyboard();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    chatExtendMenuContainer.setVisibility(View.VISIBLE);
+                    chatExtendMenu.setVisibility(View.VISIBLE);
 //                    emojiconMenu.setVisibility(View.GONE);
-//                }
-//            }, 50);
-//        } else {
+                }
+            }, 50);
+        } else {
+            if (chatExtendMenu.getVisibility() == GONE) {
+                chatExtendMenu.setVisibility(VISIBLE);
+            } else {
+                chatExtendMenu.setVisibility(GONE);
+            }
 //            if (emojiconMenu.getVisibility() == View.VISIBLE) {
 //                emojiconMenu.setVisibility(View.GONE);
 //                chatExtendMenu.setVisibility(View.VISIBLE);
 //            } else {
 //                chatExtendMenuContainer.setVisibility(View.GONE);
 //            }
-//        }
-//    }
+
+        }
+    }
 
     /**
      * show or hide emojicon
@@ -295,7 +297,7 @@ public class EaseChatInputMenu extends LinearLayout {
      * hide extend menu
      */
     public void hideExtendMenuContainer() {
-//        chatExtendMenu.setVisibility(View.GONE);
+        chatExtendMenu.setVisibility(View.GONE);
 //        emojiconMenu.setVisibility(View.GONE);
         chatExtendMenuContainer.setVisibility(View.GONE);
         chatPrimaryMenu.onExtendMenuContainerHide();
