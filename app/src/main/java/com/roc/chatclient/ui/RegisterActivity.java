@@ -52,6 +52,7 @@ public class RegisterActivity extends BaseActivity {
 //    EditText et_codeEditText;
 
     private int gender;
+    private String avatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +86,16 @@ public class RegisterActivity extends BaseActivity {
         userExtInfo.Gender = gender;
         userExtInfo.NickName = nickName;
         userExtInfo.Phone = phone;
+        userExtInfo.Avatar = avatar;
 
         ChatHelper.getInstance().sendMsg(CmdType.AddUser, userExtInfo);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ChatHelper.getInstance().setMsgCallback(null);
+        finish();
     }
 
     private void init() {
@@ -94,8 +103,12 @@ public class RegisterActivity extends BaseActivity {
         Spinner spinner_gender = findViewById(R.id.et_gender);
         Button btnRegister = findViewById(R.id.btn_register);
 
+        Spinner spinner_avatar = findViewById(R.id.et_avatar);
+
         SpinnerOnItemSelectedListener spinnerOnItemSelectedListener = new SpinnerOnItemSelectedListener();
         spinner_gender.setOnItemSelectedListener(spinnerOnItemSelectedListener);
+
+        spinner_avatar.setOnItemSelectedListener(new SpinnerAvatarOnItemSelectedListener());
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +128,18 @@ public class RegisterActivity extends BaseActivity {
                 CommonUtils.showLongToast("注册失败-" + info.Data.toString());
             }
         });
+    }
+
+    private class SpinnerAvatarOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            avatar = parent.getSelectedItem().toString();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            avatar = "a1";
+        }
     }
 
     private class SpinnerOnItemSelectedListener implements AdapterView.OnItemSelectedListener {

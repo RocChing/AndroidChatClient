@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import com.roc.chatclient.adapter.EaseMessageAdapter;
 import com.roc.chatclient.entity.Msg;
+import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.DateUtils;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.EaseChatMessageList;
@@ -44,6 +47,7 @@ public abstract class EaseChatRow extends LinearLayout {
     protected TextView deliveredView;
 
     protected int currentUserId;
+    protected String currentUserAvatar;
 
     protected EaseChatMessageList.MessageListItemClickListener itemClickListener;
 
@@ -56,6 +60,7 @@ public abstract class EaseChatRow extends LinearLayout {
         this.adapter = adapter;
         inflater = LayoutInflater.from(context);
 
+        currentUserAvatar = PreferenceManager.getInstance().getCurrentUserAvatar();
         currentUserId = PreferenceManager.getInstance().getCurrentUserId();
 
         initView();
@@ -120,10 +125,15 @@ public abstract class EaseChatRow extends LinearLayout {
         //set nickname and avatar
         if (isSendMsg()) {
             // EaseUserUtils.setUserAvatar(context, EMClient.getInstance().getCurrentUser(), userAvatarView);
+            CommonUtils.setUserAvatar(context, currentUserAvatar, userAvatarView);
         } else {
             // EaseUserUtils.setUserAvatar(context, message.getFrom(), userAvatarView);
             //EaseUserUtils.setUserNick(message.getSender(), usernickView);
-            usernickView.setText(sender + "");
+            UserExtInfo user = ChatHelper.getInstance().getUserInfo(sender);
+            if (user != null) {
+                CommonUtils.setUserAvatar(context, user.Avatar, userAvatarView);
+                CommonUtils.setUserNick(user, usernickView);
+            }
         }
 
         if (deliveredView != null) {

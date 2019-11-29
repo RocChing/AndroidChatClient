@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.StringUtils;
 
 import java.util.ArrayList;
@@ -84,10 +85,8 @@ public class EaseContactAdapter extends ArrayAdapter<UserExtInfo> implements Sec
             holder.headerView.setVisibility(View.GONE);
         }
 
-        setUserNick(user, holder.nameView);
-//        EaseUserUtils.setUserNick(username, holder.nameView);
-//        EaseUserUtils.setUserAvatar(getContext(), username, holder.avatar);
-
+        CommonUtils.setUserNick(user, holder.nameView);
+        CommonUtils.setUserAvatar(getContext(), user.Avatar, holder.avatar);
 
         if (primaryColor != 0)
             holder.nameView.setTextColor(primaryColor);
@@ -252,35 +251,4 @@ public class EaseContactAdapter extends ArrayAdapter<UserExtInfo> implements Sec
         this.initialLetterColor = initialLetterColor;
         return this;
     }
-
-    private void setUserNick(UserExtInfo user, TextView textView) {
-        if (textView != null) {
-            if (user != null && !StringUtils.isEmpty(user.NickName)) {
-                textView.setText(user.NickName);
-            } else {
-                textView.setText(user.Name);
-            }
-        }
-    }
-
-//    private void setUserAvatar(Context context, User user, ImageView imageView){
-//
-//        if(user != null && !StringUtils.isEmpty(user.Avatar)){
-//            try {
-//                int avatarResId = Integer.parseInt(user.Avatar);
-//                Glide.with(context).load(avatarResId).into(imageView);
-//            } catch (Exception e) {
-//                Glide.with(context)
-//                        .load(user.Avatar)
-//                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                        .placeholder(R.drawable.ease_default_avatar)
-//                        .error(R.drawable.ease_default_avatar)
-//                        .bitmapTransform(new CropCircleTransformation(context))
-//                        .into(imageView);
-//
-//            }
-//        }else{
-//            Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
-//        }
-//    }
 }

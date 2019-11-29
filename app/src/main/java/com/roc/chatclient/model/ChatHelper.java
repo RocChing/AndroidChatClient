@@ -177,6 +177,18 @@ public class ChatHelper {
         return new UserExtInfo();
     }
 
+    public UserExtInfo getUserInfo(int id) {
+        if (contactList != null) {
+            for (String key : contactList.keySet()) {
+                UserExtInfo user = contactList.get(key);
+                if (user.Id == id) {
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+
     public List<EMConversation> getEMConversationList() {
         return demoModel.getEMConversationList();
     }

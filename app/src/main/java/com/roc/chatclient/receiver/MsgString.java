@@ -10,8 +10,8 @@ public class MsgString {
 
     //    public final static String ServerIp = "192.168.22.146";
     //    public final static String ServerIp = "192.168.150.141";
-//    public final static String ServerIp = "192.168.1.23";
-    public final static String ServerIp = "47.95.194.168";
+    public final static String ServerIp = "192.168.1.23";
+//    public final static String ServerIp = "47.95.194.168";
     public final static int ServerPort = 8800;
 
 }

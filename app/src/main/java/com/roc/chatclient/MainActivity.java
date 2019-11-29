@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         if (isLogin) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
+            finish();
         }
 
         ImageView registerBtn = findViewById(R.id.img_register);

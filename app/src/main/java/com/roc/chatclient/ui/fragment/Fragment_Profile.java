@@ -16,7 +16,12 @@ import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.ui.SettingActivity;
+import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.PreferenceManager;
+import com.roc.chatclient.util.ResourcesUtils;
+import com.roc.chatclient.util.StringUtils;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Fragment_Profile extends BaseFragment {
 
@@ -46,6 +51,15 @@ public class Fragment_Profile extends BaseFragment {
             } else {
                 iv_sex.setImageResource(R.drawable.ic_sex_male);
             }
+
+            CircleImageView profile_image = view.findViewById(R.id.profile_image);
+            if (StringUtils.isEmpty(user.Avatar)) {
+                profile_image.setImageResource(R.drawable.ease_default_avatar);
+            } else {
+                int resId = ResourcesUtils.getDrawableId(getContext(), user.Avatar);
+                profile_image.setImageResource(resId);
+            }
+//            CommonUtils.setUserAvatar(getContext(), user.Avatar, profile_image);
         }
     }
 

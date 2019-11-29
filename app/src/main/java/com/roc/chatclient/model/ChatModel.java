@@ -77,6 +77,7 @@ public class ChatModel {
             conversation.setUnreadMsgCount(msg.getUnReadCount());
             conversation.setChatId(msg.getId());
             conversation.setToId(msg.getToId());
+            conversation.setAvatar(msg.getAvatar());
             emConversations.add(conversation);
         }
 //        Log.d("bbb", "the getEMConversationList list count is:" + emConversations.size());

@@ -112,9 +112,8 @@ public class EaseConversationAdapater extends ArrayAdapter<EMConversation> {
 //            EMChatRoom room = EMClient.getInstance().chatroomManager().getChatRoom(username);
 //            holder.name.setText(room != null && !TextUtils.isEmpty(room.getName()) ? room.getName() : username);
         } else {
-//            EaseUserUtils.setUserAvatar(getContext(), username, holder.avatar);
-//            EaseUserUtils.setUserNick(username, holder.name);
-            setUserNick(conversation.getNickName(), username, holder.name);
+            CommonUtils.setUserAvatar(getContext(), conversation.getAvatar(), holder.avatar);
+            CommonUtils.setUserNick(conversation.getNickName(), username, holder.name);
         }
 
         if (conversation.getUnreadMsgCount() > 0) {
@@ -205,16 +204,6 @@ public class EaseConversationAdapater extends ArrayAdapter<EMConversation> {
 
     public void setTimeSize(float timeSize) {
         this.timeSize = timeSize;
-    }
-
-    private void setUserNick(String nickName, String name, TextView textView) {
-        if (textView != null) {
-            if (!StringUtils.isEmpty(nickName)) {
-                textView.setText(nickName);
-            } else {
-                textView.setText(name);
-            }
-        }
     }
 
     private class ConversationFilter extends Filter {

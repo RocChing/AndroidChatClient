@@ -157,6 +157,31 @@
                 android:textSize="16sp" />
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Spinner
+                android:id="@+id/et_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_login"
+                android:entries="@array/avatar"
+                android:paddingLeft="90dp"
+                android:textSize="16sp">
+
+            </Spinner>
+
+            <TextView
+                android:layout_width="90dp"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/et_avatar"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:text="头像"
+                android:textColor="#353535"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
         <Button
             android:id="@+id/btn_register"
             android:layout_width="match_parent"

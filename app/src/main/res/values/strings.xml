@@ -6,6 +6,23 @@
         <item>男</item>
         <item>女</item>
     </string-array>
+
+    <string-array name="avatar">
+        <item>a1</item>
+        <item>a2</item>
+        <item>a3</item>
+        <item>a4</item>
+        <item>a5</item>
+        <item>a6</item>
+        <item>a7</item>
+        <item>a8</item>
+        <item>a9</item>
+        <item>a10</item>
+        <item>a11</item>
+        <item>a12</item>
+        <item>a13</item>
+        <item>a14</item>
+    </string-array>
     <!-- Main-->
     <string name="contacts">通讯录</string>
     <string name="me">我</string>

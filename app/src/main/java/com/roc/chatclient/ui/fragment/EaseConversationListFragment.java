@@ -140,7 +140,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
                     break;
 
                 case MSG_REFRESH: {
-                    Log.d(Tag, "MSG_REFRESH");
+//                    Log.d(Tag, "MSG_REFRESH");
                     conversationList.clear();
                     conversationList.addAll(loadConversationList());
                     conversationListView.refresh();
@@ -198,7 +198,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
      */
     public void refresh() {
         boolean flag = !handler.hasMessages(MSG_REFRESH);
-        Log.d("flag", "the flag value is:" + flag);
+//        Log.d("flag", "the flag value is:" + flag);
 
         if (flag) {
             handler.sendEmptyMessage(MSG_REFRESH);
@@ -217,7 +217,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         this.hidden = hidden;
-        Log.d(Tag, "onHiddenChanged the hidden value is:" + hidden);
+//        Log.d(Tag, "onHiddenChanged the hidden value is:" + hidden);
         if (!hidden && !isConflict) {
             refresh();
         }
@@ -226,7 +226,7 @@ public class EaseConversationListFragment extends EaseBaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(Tag, "onResume the hidden value is:" + hidden);
+//        Log.d(Tag, "onResume the hidden value is:" + hidden);
         if (!hidden) {
             refresh();
         }

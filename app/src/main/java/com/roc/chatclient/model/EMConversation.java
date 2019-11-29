@@ -18,6 +18,8 @@ public class EMConversation {
 
     private String toId;
 
+    private String avatar;
+
     public String getToId() {
         return toId;
     }
@@ -32,6 +34,14 @@ public class EMConversation {
 
     public void setChatId(int chatId) {
         this.chatId = chatId;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getName() {

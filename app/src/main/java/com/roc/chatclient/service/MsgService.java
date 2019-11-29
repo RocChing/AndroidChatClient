@@ -64,15 +64,12 @@ public class MsgService extends Service {
             @Override
             public void run() {
                 if (!client.isConnected()) {
-                    connectListener.onConnectionFailed();
                     client.connect();
                     return;
-                } else {
-                    connectListener.onConnectionSuccess();
                 }
                 sendCheckMsg();
             }
-        }, 1000, 10000);
+        }, 1000, 60000);
     }
 
     @Override

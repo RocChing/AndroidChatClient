@@ -6,8 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.roc.chatclient.ChatApplication;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.MsgType;
@@ -138,7 +143,7 @@ public final class CommonUtils {
 
     public static boolean hasNetwork(Context var0) {
         if (var0 != null) {
-            ConnectivityManager var1 = (ConnectivityManager)var0.getSystemService("connectivity");
+            ConnectivityManager var1 = (ConnectivityManager) var0.getSystemService("connectivity");
             NetworkInfo var2 = var1.getActiveNetworkInfo();
             return var2 != null ? var2.isAvailable() : false;
         } else {
@@ -147,8 +152,53 @@ public final class CommonUtils {
     }
 
     public static boolean isSingleActivity(Context var0) {
-        ActivityManager var1 = (ActivityManager)var0.getSystemService("activity");
+        ActivityManager var1 = (ActivityManager) var0.getSystemService("activity");
         List var2 = var1.getRunningTasks(1);
-        return ((ActivityManager.RunningTaskInfo)var2.get(0)).numRunning == 1;
+        return ((ActivityManager.RunningTaskInfo) var2.get(0)).numRunning == 1;
+    }
+
+    /**
+     * set user avatar
+     *
+     * @param avatar
+     */
+    public static void setUserAvatar(Context context, String avatar, ImageView imageView) {
+        if (!StringUtils.isEmpty(avatar)) {
+            try {
+                int resId = ResourcesUtils.getDrawableId(context, avatar);
+//                Log.d("avatar", "the resId value is:" + resId);
+                Glide.with(context)
+                        .load(resId)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .placeholder(R.drawable.ease_default_avatar)
+                        .error(R.drawable.ease_default_avatar)
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .into(imageView);
+            } catch (Exception e) {
+                Log.d("", e.getMessage());
+            }
+        } else {
+            Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
+        }
+    }
+
+    public static void setUserNick(UserExtInfo user, TextView textView) {
+        if (textView != null) {
+            if (user != null && !StringUtils.isEmpty(user.NickName)) {
+                textView.setText(user.NickName);
+            } else {
+                textView.setText(user.Name);
+            }
+        }
+    }
+
+    public static void setUserNick(String nickName, String name, TextView textView) {
+        if (textView != null) {
+            if (!StringUtils.isEmpty(nickName)) {
+                textView.setText(nickName);
+            } else {
+                textView.setText(name);
+            }
+        }
     }
 }

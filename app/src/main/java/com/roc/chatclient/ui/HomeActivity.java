@@ -114,21 +114,22 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            switch (keyBackClickCount++) {
-                case 0:
-                    CommonUtils.showLongToast(getString(R.string.key_back_msg));
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            keyBackClickCount = 0;
-                        }
-                    }, 3000);
-                    break;
-                case 1:
-                    MFGT.finishFormBottom(this);
-                    break;
-            }
+//            switch (keyBackClickCount++) {
+//                case 0:
+//                    CommonUtils.showLongToast(getString(R.string.key_back_msg));
+//                    Timer timer = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            keyBackClickCount = 0;
+//                        }
+//                    }, 3000);
+//                    break;
+//                case 1:
+////                    MFGT.finishFormBottom(this);
+//                    break;
+//            }
+            MFGT.goHome();
             return true;
         }
         return super.onKeyDown(keyCode, event);

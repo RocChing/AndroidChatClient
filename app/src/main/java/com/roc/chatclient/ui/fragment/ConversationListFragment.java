@@ -82,6 +82,8 @@ public class ConversationListFragment extends EaseConversationListFragment {
                 }
             }
         });
+
+        setErrorText(View.GONE);
     }
 
     @Override

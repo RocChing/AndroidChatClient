@@ -137,7 +137,7 @@ public class MessageDao {
             ContentValues values = new ContentValues();
             values.put("all_count", 1);
             values.put("un_read_count", 1);
-            values.put("avatar", "");
+            values.put("avatar", info.From.Avatar);
             values.put("last_msg", info.Msg);
             values.put("last_msg_time", info.ReceiveTime);
             values.put("name", info.From.Name);

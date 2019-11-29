@@ -38,6 +38,14 @@ public class MFGT {
                 R.anim.push_bottom_out);
     }
 
+    public static void goHome() {
+        Context context = ChatApplication.getInstance();
+        Intent home = new Intent(Intent.ACTION_MAIN);
+        home.addCategory(Intent.CATEGORY_HOME);
+        home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(home);
+    }
+
     public static void gotoCommon(Activity context, String title) {
         Intent intent = new Intent();
         intent.setClass(context, CommonActivity.class);
