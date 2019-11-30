@@ -1,11 +1,22 @@
 package com.roc.chatclient.ui.fragment;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,12 +28,14 @@ import android.widget.Toast;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.CmdType;
 import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.model.EaseEmojicon;
+import com.roc.chatclient.model.FileInfo;
 import com.roc.chatclient.model.MsgInfo;
 import com.roc.chatclient.model.MsgToType;
 import com.roc.chatclient.model.MsgType;
@@ -30,6 +43,9 @@ import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.model.UserExtInfo;
 import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.DateUtils;
+import com.roc.chatclient.util.FileUtils;
+import com.roc.chatclient.util.ImageUtils;
+import com.roc.chatclient.util.PathUtil;
 import com.roc.chatclient.util.StringUtils;
 import com.roc.chatclient.widget.EaseChatExtendMenu;
 import com.roc.chatclient.widget.EaseChatInputMenu;
@@ -37,6 +53,9 @@ import com.roc.chatclient.widget.EaseChatMessageList;
 import com.roc.chatclient.R;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -68,14 +87,20 @@ public class EaseChatFragment extends EaseBaseFragment {
     protected int toId = 0;
     private String Tag = "EaseChatFragment";
 
+    protected static final int REQUEST_CODE_MAP = 1;
+    protected static final int REQUEST_CODE_CAMERA = 2;
+    protected static final int REQUEST_CODE_LOCAL = 3;
+
     static final int ITEM_TAKE_PICTURE = 1;
     static final int ITEM_PICTURE = 2;
     static final int ITEM_LOCATION = 3;
 
-    protected int[] itemStrings = { R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location };
-    protected int[] itemdrawables = { R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
-            R.drawable.ease_chat_location_selector };
-    protected int[] itemIds = { ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION };
+    protected File cameraFile;
+
+    protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location};
+    protected int[] itemdrawables = {R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
+            R.drawable.ease_chat_location_selector};
+    protected int[] itemIds = {ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION};
     protected MyItemClickListener extendMenuItemClickListener;
 
     protected List<Msg> msgList;
@@ -123,9 +148,9 @@ public class EaseChatFragment extends EaseBaseFragment {
 
         inputMenu.init();
 
-        registerExtendMenuItem();
-
         extendMenuItemClickListener = new MyItemClickListener();
+
+        registerExtendMenuItem();
 
         inputMenu.setChatInputMenuListener(new EaseChatInputMenu.ChatInputMenuListener() {
 
@@ -275,7 +300,7 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     protected void onMessageListInit() {
         messageList.init(toChatUsername, chatType, chatFragmentHelper != null ? chatFragmentHelper.onSetCustomChatRowProvider() : null);
-        //setListItemClickListener();
+        setListItemClickListener();
 
         messageList.getListView().setOnTouchListener(new View.OnTouchListener() {
 
@@ -298,17 +323,7 @@ public class EaseChatFragment extends EaseBaseFragment {
         }
         MsgInfo info = new MsgInfo(content, MsgType.Text, currentUserId, toId, MsgToType.User);
 
-        Msg msg = new Msg();
-        msg.setChatId(chatId);
-        msg.setContent(info.Msg);
-        msg.setSender(info.From);
-        msg.setSendTime(DateUtils.getFormatDate(new Date()));
-        msg.setType(info.Type);
-
-        chatHelper.saveMsg(msg);
-        chatHelper.sendMsg(CmdType.SendMsg, info);
-
-        refresh(msg);
+        sendMsg(info);
     }
 
     protected void emptyHistory() {
@@ -331,11 +346,60 @@ public class EaseChatFragment extends EaseBaseFragment {
         messageList.refreshSelectLast();
     }
 
+    protected void setListItemClickListener() {
+        messageList.setItemClickListener(new EaseChatMessageList.MessageListItemClickListener() {
+
+            @Override
+            public void onUserAvatarClick(String username) {
+                if(chatFragmentHelper != null){
+                    chatFragmentHelper.onAvatarClick(username);
+                }
+            }
+
+            @Override
+            public void onUserAvatarLongClick(String username) {
+                if(chatFragmentHelper != null){
+                    chatFragmentHelper.onAvatarLongClick(username);
+                }
+            }
+
+            @Override
+            public void onResendClick(final Msg message) {
+//                new EaseAlertDialog(getActivity(), R.string.resend, R.string.confirm_resend, null, new AlertDialogUser() {
+//                    @Override
+//                    public void onResult(boolean confirmed, Bundle bundle) {
+//                        if (!confirmed) {
+//                            return;
+//                        }
+//                        resendMessage(message);
+//                    }
+//                }, true).show();
+            }
+
+            @Override
+            public void onBubbleLongClick(Msg message) {
+                //contextMenuMessage = message;
+                if(chatFragmentHelper != null){
+                    chatFragmentHelper.onMessageBubbleLongClick(message);
+                }
+            }
+
+            @Override
+            public boolean onBubbleClick(Msg message) {
+                if(chatFragmentHelper != null){
+                    return chatFragmentHelper.onMessageBubbleClick(message);
+                }
+                return false;
+            }
+
+        });
+    }
+
     /**
      * register extend menu, item id need > 3 if you override this method and keep exist item
      */
-    protected void registerExtendMenuItem(){
-        for(int i = 0; i < itemStrings.length; i++){
+    protected void registerExtendMenuItem() {
+        for (int i = 0; i < itemStrings.length; i++) {
             inputMenu.registerExtendMenuItem(itemStrings[i], itemdrawables[i], itemIds[i], extendMenuItemClickListener);
         }
     }
@@ -368,33 +432,164 @@ public class EaseChatFragment extends EaseBaseFragment {
 
     /**
      * handle the click event for extend menu
-     *
      */
-    class MyItemClickListener implements EaseChatExtendMenu.EaseChatExtendMenuItemClickListener{
+    class MyItemClickListener implements EaseChatExtendMenu.EaseChatExtendMenuItemClickListener {
 
         @Override
         public void onClick(int itemId, View view) {
-            if(chatFragmentHelper != null){
-                if(chatFragmentHelper.onExtendMenuItemClick(itemId, view)){
-                    return;
-                }
-            }
+//            if (chatFragmentHelper != null) {
+//                if (chatFragmentHelper.onExtendMenuItemClick(itemId, view)) {
+//                    return;
+//                }
+//            }
             switch (itemId) {
                 case ITEM_TAKE_PICTURE:
-//                    selectPicFromCamera();
+                    selectPicFromCamera();
                     break;
                 case ITEM_PICTURE:
-//                    selectPicFromLocal();
+                    selectPicFromLocal();
                     break;
                 case ITEM_LOCATION:
 //                    startActivityForResult(new Intent(getActivity(), EaseBaiduMapActivity.class), REQUEST_CODE_MAP);
                     break;
-
                 default:
                     break;
             }
         }
+    }
 
+    /**
+     * capture new image
+     */
+    protected void selectPicFromCamera() {
+        if (!CommonUtils.isSdcardExist()) {
+            Toast.makeText(getActivity(), R.string.sd_card_does_not_exist, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String fileName = chatHelper.getCurrentUserName() + "_" + System.currentTimeMillis() + ".jpg";
+
+        try {
+            cameraFile = new File(PathUtil.getInstance().getImagePath(), fileName);
+            cameraFile.getParentFile().mkdirs();
+            startActivityForResult(
+                    new Intent(MediaStore.ACTION_IMAGE_CAPTURE).putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cameraFile)),
+                    REQUEST_CODE_CAMERA);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * select local image
+     */
+    protected void selectPicFromLocal() {
+        Log.d("aaa", "选择本地图片");
+        Intent intent;
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+
+        } else {
+            intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        }
+        startActivityForResult(intent, REQUEST_CODE_LOCAL);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CODE_CAMERA) { // capture new image
+                if (cameraFile != null && cameraFile.exists())
+                    sendImageMessage(cameraFile.getAbsolutePath());
+            } else if (requestCode == REQUEST_CODE_LOCAL) { // send local image
+                if (data != null) {
+                    Uri selectedImage = data.getData();
+                    if (selectedImage != null) {
+                        sendPicByUri(selectedImage);
+                    }
+                }
+            } else if (requestCode == REQUEST_CODE_MAP) { // location
+//                double latitude = data.getDoubleExtra("latitude", 0);
+//                double longitude = data.getDoubleExtra("longitude", 0);
+//                String locationAddress = data.getStringExtra("address");
+//                if (locationAddress != null && !locationAddress.equals("")) {
+//                    sendLocationMessage(latitude, longitude, locationAddress);
+//                } else {
+//                    Toast.makeText(getActivity(), R.string.unable_to_get_loaction, 0).show();
+//                }
+            }
+        }
+    }
+
+    protected void sendImageMessage(String path) {
+        Log.d("aaa", "the path is:" + path);
+        File file = new File(path);
+        byte[] bytes = FileUtils.File2Bytes(file);
+
+        Log.d("aaa", "the file name is:" + file.getName());
+        File imagePath = PathUtil.getInstance().getImagePath();
+        File imageFile = FileUtils.saveFile(imagePath.getAbsolutePath(), file.getName(), bytes);
+
+        if (imageFile == null) {
+            return;
+        }
+
+        String thumbPath = ImageUtils.saveThumbImage(imageFile, ImageUtils.ThumbWidth, ImageUtils.ThumbHeight);
+        FileInfo fileInfo = new FileInfo(imageFile, thumbPath);
+        String json = JSON.toJSONString(fileInfo);
+
+        MsgInfo info = new MsgInfo(json, MsgType.Image, currentUserId, toId, MsgToType.User, bytes);
+
+        sendMsg(info);
+    }
+
+    public void sendMsg(MsgInfo info) {
+        Msg msg = new Msg();
+        msg.setChatId(chatId);
+        msg.setContent(info.Msg);
+        msg.setSender(info.From);
+        msg.setSendTime(DateUtils.getFormatDate(new Date()));
+        msg.setType(info.Type);
+
+        chatHelper.saveMsg(msg);
+        chatHelper.sendMsg(CmdType.SendMsg, info);
+
+        refresh(msg);
+    }
+
+    /**
+     * send image
+     *
+     * @param selectedImage
+     */
+    protected void sendPicByUri(Uri selectedImage) {
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            if (StringUtils.isEmpty(picturePath)) {
+                Toast toast = Toast.makeText(getActivity(), R.string.cant_find_pictures, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return;
+            }
+            sendImageMessage(picturePath);
+        } else {
+            File file = new File(selectedImage.getPath());
+            if (!file.exists()) {
+                Toast toast = Toast.makeText(getActivity(), R.string.cant_find_pictures, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return;
+            }
+            sendImageMessage(file.getAbsolutePath());
+        }
     }
 
     public interface EaseChatFragmentHelper {

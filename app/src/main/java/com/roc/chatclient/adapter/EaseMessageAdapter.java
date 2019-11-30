@@ -29,6 +29,7 @@ import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.EaseChatMessageList;
 import com.roc.chatclient.widget.EaseChatMessageList.MessageListItemClickListener;
 import com.roc.chatclient.widget.chatrow.EaseChatRow;
+import com.roc.chatclient.widget.chatrow.EaseChatRowImage;
 import com.roc.chatclient.widget.chatrow.EaseChatRowText;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
@@ -210,13 +211,15 @@ public class EaseMessageAdapter extends BaseAdapter {
         MsgType type = MsgType.getType(message.getType());
         int sender = message.getSender();
 
+        boolean flag = sender == currentUserId;
         if (type == MsgType.Text) {
-            return sender == currentUserId ? MESSAGE_TYPE_SENT_TXT : MESSAGE_TYPE_RECV_TXT;
+            return flag ? MESSAGE_TYPE_SENT_TXT : MESSAGE_TYPE_RECV_TXT;
         }
-//        if (message.getType() == EMMessage.Type.IMAGE) {
-//            return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_IMAGE : MESSAGE_TYPE_SENT_IMAGE;
-//
-//        }
+
+        if (type == MsgType.Image) {
+            return flag ? MESSAGE_TYPE_SENT_IMAGE : MESSAGE_TYPE_RECV_IMAGE;
+
+        }
 //        if (message.getType() == EMMessage.Type.LOCATION) {
 //            return message.direct() == EMMessage.Direct.RECEIVE ? MESSAGE_TYPE_RECV_LOCATION : MESSAGE_TYPE_SENT_LOCATION;
 //        }
@@ -238,8 +241,9 @@ public class EaseMessageAdapter extends BaseAdapter {
         if (customRowProvider != null && customRowProvider.getCustomChatRow(message, position, this) != null) {
             return customRowProvider.getCustomChatRow(message, position, this);
         }
-        switch (message.getType()) {
-            case 1:
+        MsgType type = MsgType.getType(message.getType());
+        switch (type) {
+            case Text:
 //                if (message.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)) {
 //                    chatRow = new EaseChatRowBigExpression(context, message, position, this);
 //                } else {
@@ -253,9 +257,9 @@ public class EaseMessageAdapter extends BaseAdapter {
 //            case FILE:
 //                chatRow = new EaseChatRowFile(context, message, position, this);
 //                break;
-//            case IMAGE:
-//                chatRow = new EaseChatRowImage(context, message, position, this);
-//                break;
+            case Image:
+                chatRow = new EaseChatRowImage(context, message, position, this);
+                break;
 //            case VOICE:
 //                chatRow = new EaseChatRowVoice(context, message, position, this);
 //                break;

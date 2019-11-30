@@ -11,6 +11,8 @@ public class ReceiveMsgInfo {
      */
     public String Msg;
 
+    public byte[] MsgOfBytes;
+
     /**
      * 发送时间
      */
@@ -26,5 +28,6 @@ public class ReceiveMsgInfo {
     public int Type;
 
     public ReceiveMsgInfo() {
+
     }
 }

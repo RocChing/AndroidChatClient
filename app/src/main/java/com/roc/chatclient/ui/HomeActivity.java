@@ -14,6 +14,8 @@ import com.roc.chatclient.ui.fragment.Fragment_Dicover;
 import com.roc.chatclient.ui.fragment.Fragment_Profile;
 import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.MFGT;
+import com.roc.chatclient.util.PathUtil;
+import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.DMTabHost;
 import com.roc.chatclient.widget.MFViewPager;
 
@@ -56,6 +58,9 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
     }
 
     private void initMainTab() {
+        String userName = PreferenceManager.getInstance().getCurrentUsername();
+        PathUtil.getInstance().initDirs(null, userName, getBaseContext());
+
         mHost.setChecked(0);
         mHost.setOnCheckedChangeListener(this);
         mHost.setHasNew(2, true);
@@ -101,7 +106,7 @@ public class HomeActivity extends BaseActivity implements DMTabHost.OnCheckedCha
         super.onRestart();
         Log.d(Tag, "onRestart the PageIndex is:" + PageIndex);
 
-       // refreshMsg();
+        // refreshMsg();
     }
 
     @Override

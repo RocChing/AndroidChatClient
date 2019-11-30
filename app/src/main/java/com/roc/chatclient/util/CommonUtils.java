@@ -201,4 +201,16 @@ public final class CommonUtils {
             }
         }
     }
+
+    /**
+     * check if sdcard exist
+     *
+     * @return
+     */
+    public static boolean isSdcardExist() {
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
+            return true;
+        else
+            return false;
+    }
 }

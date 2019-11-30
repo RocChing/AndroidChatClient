@@ -11,11 +11,18 @@ public class MsgInfo {
 
     public int ToType;
 
-    public MsgInfo(String msg, MsgType type, int from, int to, MsgToType toType) {
+    public byte[] MsgOfBytes;
+
+    public MsgInfo(String msg, MsgType type, int from, int to, MsgToType toType, byte[] bytes) {
         Msg = msg;
         Type = type.getValue();
         From = from;
         To = to;
         ToType = toType.getValue();
+        MsgOfBytes = bytes;
+    }
+
+    public MsgInfo(String msg, MsgType type, int from, int to, MsgToType toType) {
+        this(msg, type, from, to, toType, null);
     }
 }

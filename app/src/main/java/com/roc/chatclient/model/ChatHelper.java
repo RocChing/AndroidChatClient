@@ -96,9 +96,6 @@ public class ChatHelper {
         String validString = appContext.getString(R.string.validString);
         String json = JSON.toJSONString(new CmdInfo(validString, type, data));
 
-        Log.d(TAG, validString);
-        Log.d(TAG, json);
-
         Intent intent = new Intent();
         intent.setAction(MsgString.SendMsg);
         intent.putExtra(MsgString.Default_Args, json);

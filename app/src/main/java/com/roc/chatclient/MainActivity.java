@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -17,6 +19,7 @@ import com.roc.chatclient.ui.HomeActivity;
 import com.roc.chatclient.ui.LoginActivity;
 import com.roc.chatclient.ui.RegisterActivity;
 import com.roc.chatclient.util.MFGT;
+import com.roc.chatclient.util.PathUtil;
 import com.roc.chatclient.util.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        requestPermissions();
         init();
     }
 
@@ -60,6 +64,21 @@ public class MainActivity extends AppCompatActivity {
     public void toLoginView(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    private void requestPermissions() {
+        Log.d(Tag, "the build sdk_int version is:" + Build.VERSION.SDK_INT);
+        if (Build.VERSION.SDK_INT >= 23) {
+            int REQUEST_CODE_CONTACT = 101;
+            String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+            //验证是否许可权限
+            for (String str : permissions) {
+                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                    //申请权限
+                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                }
+            }
+        }
     }
 
     private String getDeviceId() {

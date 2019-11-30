@@ -1,5 +1,7 @@
 package com.roc.chatclient.socket.impl.tcp.nio;
 
+import android.util.Log;
+
 import com.roc.chatclient.socket.GClient;
 import com.roc.chatclient.socket.impl.tcp.IReceiveData;
 import com.roc.chatclient.socket.structures.BaseClient;
@@ -148,15 +150,15 @@ public final class NioClient extends BaseClient {
         Message msg = pollWriteMessage();
         try {
             while (null != msg) {
+//                Log.d(Tag, "the mWriteByteBuffer capacity is:" + mWriteByteBuffer.capacity());
+//                Log.d(Tag, "the msg length is:" + msg.length);
                 //如果消息块的大小超过缓存的最大值，则需要分段写入后才丢弃消息，不能在数据未完全写完的情况下将消息丢弃;avoid BufferOverflowException
                 if (mWriteByteBuffer.capacity() < msg.length) {
-
                     int offset = 0;
                     int leftLength = msg.length;
                     int writtenTotalLength;
 
                     while (true) {
-
                         int putLength = leftLength > mWriteByteBuffer.capacity() ? mWriteByteBuffer.capacity() : leftLength;
                         mWriteByteBuffer.put(msg.data, offset, putLength);
                         mWriteByteBuffer.flip();
@@ -166,12 +168,13 @@ public final class NioClient extends BaseClient {
                         int writtenLength = mSocketChannel.write(mWriteByteBuffer);//客户端关闭连接后，此处将抛出异常
                         writtenTotalLength = writtenLength;
 
+//                        Log.d(Tag, "the writtenLength value is:" + writtenLength);
                         while (writtenLength > 0 && mWriteByteBuffer.hasRemaining()) {
                             writtenLength = mSocketChannel.write(mWriteByteBuffer);
                             writtenTotalLength += writtenLength;
                         }
                         mWriteByteBuffer.clear();
-
+//                        Log.d(Tag, "the writtenTotalLength value is:" + writtenTotalLength);
                         if (leftLength <= 0) {
                             break;
                         }

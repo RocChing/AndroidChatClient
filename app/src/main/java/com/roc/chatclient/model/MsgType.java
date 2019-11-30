@@ -1,7 +1,7 @@
 package com.roc.chatclient.model;
 
 public enum MsgType {
-    Text(1), Image(2), Voice(3), Video(4), Link(5);
+    Text(1), Image(2), Voice(3), Video(4), Link(5), File(6);
     private int value;
 
     private MsgType(int value) {

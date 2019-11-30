@@ -1,8 +1,11 @@
 package com.roc.chatclient.socket.structures;
 
+import android.util.Log;
+
 import com.roc.chatclient.socket.structures.message.Message;
 import com.roc.chatclient.socket.structures.message.MessageReadQueen;
 import com.roc.chatclient.socket.structures.message.MessageWriteQueen;
+import com.roc.chatclient.util.StringUtils;
 
 /**
  * author       :   long
@@ -12,11 +15,12 @@ import com.roc.chatclient.socket.structures.message.MessageWriteQueen;
 
 public abstract class BaseClient {
 
+    protected String Tag = "BaseClient";
     //读队列
-    public MessageReadQueen mReadMessageQueen   = new MessageReadQueen();
+    public MessageReadQueen mReadMessageQueen = new MessageReadQueen();
 
     //收队列
-    public MessageWriteQueen mWriteMessageQueen  = new MessageWriteQueen();
+    public MessageWriteQueen mWriteMessageQueen = new MessageWriteQueen();
 
     protected BaseMessageProcessor mMessageProcessor;
 
@@ -25,39 +29,41 @@ public abstract class BaseClient {
     }
 
     //--------------------------------------------------------------------------------------
-    public void clearUnreachableMessages(){
+    public void clearUnreachableMessages() {
         Message msg = pollWriteMessage();
         while (null != msg) {
             removeWriteMessage(msg);
             msg = pollWriteMessage();
         }
     }
+
     //--------------------------------------------------------------------------------------
-    public void onReceiveData(byte[] src , int offset , int length){
-        Message msg = mReadMessageQueen.build(src,offset,length);
+    public void onReceiveData(byte[] src, int offset, int length) {
+        Message msg = mReadMessageQueen.build(src, offset, length);
         mReadMessageQueen.add(msg);
     }
 
-    public void onReceiveMessageClear(){
+    public void onReceiveMessageClear() {
         Message msg = mReadMessageQueen.mReadQueen.poll();
-        while (null != msg){
+        while (null != msg) {
             mReadMessageQueen.remove(msg);
             msg = mReadMessageQueen.mReadQueen.poll();
         }
     }
 
     //--------------------------------------------------------------------------------------
-    public void onSendMessage(byte[] src , int offset , int length) {
-        Message msg = mWriteMessageQueen.build(src,offset,length);
+    public void onSendMessage(byte[] src, int offset, int length) {
+        Log.d(Tag, "the msg length is:" + length);
+        Message msg = mWriteMessageQueen.build(src, offset, length);
         mWriteMessageQueen.add(msg);
         onCheckConnect();
     }
 
-    protected Message pollWriteMessage(){
+    protected Message pollWriteMessage() {
         return mWriteMessageQueen.mWriteQueen.poll();
     }
 
-    protected void removeWriteMessage(Message msg){
+    protected void removeWriteMessage(Message msg) {
         mWriteMessageQueen.remove(msg);
     }
 

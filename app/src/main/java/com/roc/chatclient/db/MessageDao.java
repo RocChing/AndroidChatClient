@@ -8,6 +8,7 @@ import android.util.Log;
 import com.roc.chatclient.entity.ChatMsg;
 import com.roc.chatclient.entity.Msg;
 import com.roc.chatclient.model.ChatHelper;
+import com.roc.chatclient.model.MsgType;
 import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.model.UserExtInfo;
 
@@ -104,7 +105,29 @@ public class MessageDao {
                 } else {
                     sql += " un_read_count=un_read_count+1,";
                 }
-                sql += " last_msg='" + msg.getContent() + "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
+                String content = "";
+                MsgType type = MsgType.getType(msg.getType());
+                switch (type) {
+                    case Text:
+                        content = msg.getContent();
+                        break;
+                    case Image:
+                        content ="[图片]";
+                        break;
+                    case Video:
+                        content ="[视频]";
+                        break;
+                    case Voice:
+                        content ="[语音]";
+                        break;
+                    case Link:
+                        content ="[链接]";
+                        break;
+                    case File:
+                        content ="[文件]";
+                        break;
+                }
+                sql += " last_msg='" + content+ "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
                 Log.d(Tag, "the sql is:" + sql);
                 db.execSQL(sql);
 //                Log.d(Tag, "the update chat_list");

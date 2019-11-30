@@ -101,6 +101,7 @@ public class MsgService extends Service {
         String json = JSON.toJSONString(info);
         Log.d(Tag, "sendMsg:" + json);
         json += "\r\n";
+
         messageProcessor.send(client, json.getBytes());
     }
 
