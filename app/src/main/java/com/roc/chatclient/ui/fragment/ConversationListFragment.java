@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
 import com.roc.chatclient.db.InviteMessageDao;
 import com.roc.chatclient.entity.Msg;
@@ -17,10 +18,17 @@ import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.model.CmdInfo;
 import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.model.EMConversation;
+import com.roc.chatclient.model.FileInfo;
+import com.roc.chatclient.model.MsgType;
 import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.ui.ChatActivity;
 import com.roc.chatclient.util.CommonUtils;
+import com.roc.chatclient.util.FileUtils;
+import com.roc.chatclient.util.ImageUtils;
+import com.roc.chatclient.util.PathUtil;
+
+import java.io.File;
 
 public class ConversationListFragment extends EaseConversationListFragment {
     private TextView errorText;
@@ -39,8 +47,26 @@ public class ConversationListFragment extends EaseConversationListFragment {
             @Override
             public void HandleMsg(CmdInfo info, String json) {
                 ReceiveMsgInfo receiveMsgInfo = info.of(ReceiveMsgInfo.class);
+                MsgType type = MsgType.getType(receiveMsgInfo.Type);
                 String userName = receiveMsgInfo.From.Name;
                 if (chatHelper.isFriendUser(userName)) {
+                    File file = null;
+                    PathUtil pathUtil = PathUtil.getInstance();
+                    String msgJson = "";
+                    switch (type) {
+                        case File:
+                            file = pathUtil.getFilePath();
+                            msgJson = getFileInfoJson(file, receiveMsgInfo);
+                            break;
+                        case Image:
+                            file = pathUtil.getImagePath();
+                            msgJson = getFileInfoJson(file, receiveMsgInfo);
+                            break;
+                        default:
+                            msgJson = receiveMsgInfo.Msg;
+                            break;
+                    }
+
                     Msg msg = chatHelper.saveMsg(receiveMsgInfo);
                     handler.sendEmptyMessage(2);
                     chatHelper.sendMsg(msg, json);
@@ -129,6 +155,27 @@ public class ConversationListFragment extends EaseConversationListFragment {
     public void setErrorText(int visibility) {
         if (errorItemContainer != null) {
             errorItemContainer.setVisibility(visibility);
+        }
+    }
+
+    private String getFileInfoJson(File file, ReceiveMsgInfo info) {
+        String json = "";
+        try {
+            FileInfo oldFile = JSON.parseObject(info.Msg, FileInfo.class);
+            if (oldFile == null) return json;
+
+            byte[] bytes = info.MsgOfBytes;
+            if (bytes == null || bytes.length < 1) return json;
+            File imageFile = FileUtils.saveFile(file.getAbsolutePath(), oldFile.getName(), bytes);
+            if (imageFile == null) return json;
+
+            String thumbPath = ImageUtils.saveThumbImage(imageFile, ImageUtils.ThumbWidth, ImageUtils.ThumbHeight);
+            FileInfo fileInfo = new FileInfo(imageFile, thumbPath);
+            json = JSON.toJSONString(fileInfo);
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return json;
         }
     }
 }

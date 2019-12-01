@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.roc.chatclient.R;
+import com.roc.chatclient.socket.structures.message.Message;
 
 public final class CommonUtils {
 
@@ -35,6 +37,14 @@ public final class CommonUtils {
 
     public static void showShortToast(String pMsg) {
         Toast.makeText(ChatApplication.getInstance(), pMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    public static String encodeBase64(byte[] bytes) {
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
+    public static byte[] decodeBase64(String str) {
+        return Base64.decode(str, Base64.DEFAULT);
     }
 
     /**

@@ -17,6 +17,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -277,10 +278,7 @@ public class EaseMessageAdapter extends BaseAdapter {
     @SuppressLint("NewApi")
     public View getView(final int position, View convertView, ViewGroup parent) {
         Msg message = getItem(position);
-        if (convertView == null) {
-            convertView = createChatRow(context, message, position);
-        }
-
+        convertView = createChatRow(context, message, position);
         //refresh ui with messages
         ((EaseChatRow) convertView).setUpView(message, position, itemClickListener);
 

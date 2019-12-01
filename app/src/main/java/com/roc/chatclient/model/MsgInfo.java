@@ -13,6 +13,8 @@ public class MsgInfo {
 
     public byte[] MsgOfBytes;
 
+    public String MsgBase64;
+
     public MsgInfo(String msg, MsgType type, int from, int to, MsgToType toType, byte[] bytes) {
         Msg = msg;
         Type = type.getValue();

@@ -1,6 +1,7 @@
 package com.roc.chatclient.socket.impl.tcp.bio;
 
 import com.roc.chatclient.socket.GClient;
+import com.roc.chatclient.socket.impl.tcp.IReceiveData;
 import com.roc.chatclient.socket.structures.BaseClient;
 import com.roc.chatclient.socket.structures.BaseMessageProcessor;
 import com.roc.chatclient.socket.structures.IConnectListener;
@@ -25,10 +26,12 @@ public class BioClient extends BaseClient {
 
     //-------------------------------------------------------------------------------------------
     private BioConnector mConnector;
+    private IReceiveData receiveData;
 
-    public BioClient(BaseMessageProcessor mMessageProcessor, IConnectListener mConnectListener) {
+    public BioClient(BaseMessageProcessor mMessageProcessor, IConnectListener mConnectListener, IReceiveData iReceiveData) {
         super(mMessageProcessor);
         mConnector = new BioConnector(this, mConnectListener);
+        receiveData = iReceiveData;
     }
 
     //-------------------------------------------------------------------------------------------
@@ -63,6 +66,15 @@ public class BioClient extends BaseClient {
     public void init(OutputStream mOutputStream, InputStream mInputStream) throws IOException {
         this.mOutputStream = mOutputStream;
         this.mInputStream = mInputStream;
+    }
+
+    @Override
+    public void onReceiveData(byte[] src, int offset, int length) {
+        Message msg = mReadMessageQueen.build(src, offset, length);
+        mReadMessageQueen.add(msg);
+        if (receiveData != null) {
+            receiveData.HandleMsg(msg);
+        }
     }
 
     @Override

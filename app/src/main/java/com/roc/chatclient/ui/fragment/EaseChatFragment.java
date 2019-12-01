@@ -351,14 +351,14 @@ public class EaseChatFragment extends EaseBaseFragment {
 
             @Override
             public void onUserAvatarClick(String username) {
-                if(chatFragmentHelper != null){
+                if (chatFragmentHelper != null) {
                     chatFragmentHelper.onAvatarClick(username);
                 }
             }
 
             @Override
             public void onUserAvatarLongClick(String username) {
-                if(chatFragmentHelper != null){
+                if (chatFragmentHelper != null) {
                     chatFragmentHelper.onAvatarLongClick(username);
                 }
             }
@@ -379,14 +379,14 @@ public class EaseChatFragment extends EaseBaseFragment {
             @Override
             public void onBubbleLongClick(Msg message) {
                 //contextMenuMessage = message;
-                if(chatFragmentHelper != null){
+                if (chatFragmentHelper != null) {
                     chatFragmentHelper.onMessageBubbleLongClick(message);
                 }
             }
 
             @Override
             public boolean onBubbleClick(Msg message) {
-                if(chatFragmentHelper != null){
+                if (chatFragmentHelper != null) {
                     return chatFragmentHelper.onMessageBubbleClick(message);
                 }
                 return false;
@@ -484,7 +484,6 @@ public class EaseChatFragment extends EaseBaseFragment {
      * select local image
      */
     protected void selectPicFromLocal() {
-        Log.d("aaa", "选择本地图片");
         Intent intent;
         if (Build.VERSION.SDK_INT < 19) {
             intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -524,11 +523,9 @@ public class EaseChatFragment extends EaseBaseFragment {
     }
 
     protected void sendImageMessage(String path) {
-        Log.d("aaa", "the path is:" + path);
         File file = new File(path);
         byte[] bytes = FileUtils.File2Bytes(file);
 
-        Log.d("aaa", "the file name is:" + file.getName());
         File imagePath = PathUtil.getInstance().getImagePath();
         File imageFile = FileUtils.saveFile(imagePath.getAbsolutePath(), file.getName(), bytes);
 
@@ -540,8 +537,8 @@ public class EaseChatFragment extends EaseBaseFragment {
         FileInfo fileInfo = new FileInfo(imageFile, thumbPath);
         String json = JSON.toJSONString(fileInfo);
 
-        MsgInfo info = new MsgInfo(json, MsgType.Image, currentUserId, toId, MsgToType.User, bytes);
-
+        MsgInfo info = new MsgInfo(json, MsgType.Image, currentUserId, toId, MsgToType.User);
+        info.MsgBase64 = CommonUtils.encodeBase64(bytes);
         sendMsg(info);
     }
 
@@ -555,7 +552,6 @@ public class EaseChatFragment extends EaseBaseFragment {
 
         chatHelper.saveMsg(msg);
         chatHelper.sendMsg(CmdType.SendMsg, info);
-
         refresh(msg);
     }
 
@@ -579,6 +575,7 @@ public class EaseChatFragment extends EaseBaseFragment {
                 toast.show();
                 return;
             }
+            Log.d(Tag, "the picture path is:" + picturePath);
             sendImageMessage(picturePath);
         } else {
             File file = new File(selectedImage.getPath());
@@ -588,6 +585,7 @@ public class EaseChatFragment extends EaseBaseFragment {
                 toast.show();
                 return;
             }
+            Log.d(Tag, "the file getAbsolutePath is:" + file.getAbsolutePath());
             sendImageMessage(file.getAbsolutePath());
         }
     }

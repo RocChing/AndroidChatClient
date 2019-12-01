@@ -16,6 +16,7 @@ import com.roc.chatclient.model.Constant;
 import com.roc.chatclient.receiver.SendMsgReceiver;
 import com.roc.chatclient.receiver.MsgString;
 import com.roc.chatclient.socket.impl.tcp.IReceiveData;
+import com.roc.chatclient.socket.impl.tcp.bio.BioClient;
 import com.roc.chatclient.socket.impl.tcp.nio.NioClient;
 import com.roc.chatclient.socket.structures.BaseClient;
 import com.roc.chatclient.socket.structures.BaseMessageProcessor;
@@ -31,7 +32,7 @@ import java.util.TimerTask;
 
 public class MsgService extends Service {
 
-    private NioClient client;
+    private BioClient client;
     private String Tag = "MsgService";
     private SendMsgReceiver msgReceiver;
 
@@ -51,7 +52,7 @@ public class MsgService extends Service {
         IntentFilter intentFilter = new IntentFilter(MsgString.SendMsg);
         LocalBroadcastManager.getInstance(this).registerReceiver(msgReceiver, intentFilter);
 
-        client = new NioClient(messageProcessor, connectListener, receiveData);
+        client = new BioClient(messageProcessor, connectListener, receiveData);
         client.setConnectAddress(new TcpAddress[]{new TcpAddress(MsgString.ServerIp, MsgString.ServerPort)});
         client.connect();
 

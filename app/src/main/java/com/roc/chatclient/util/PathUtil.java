@@ -132,9 +132,9 @@ public class PathUtil {
     private static File generateVoicePath(String var0, String var1, Context var2) {
         String var3 = null;
         if (var0 == null) {
-            var3 = pathPrefix + var1 + "/voice/";
+            var3 = pathPrefix + var1 + voicePathName;
         } else {
-            var3 = pathPrefix + var0 + "/" + var1 + "/voice/";
+            var3 = pathPrefix + var0 + "/" + var1 + voicePathName;
         }
 
         return new File(getStorageDir(var2), var3);
@@ -143,9 +143,9 @@ public class PathUtil {
     private static File generateFiePath(String var0, String var1, Context var2) {
         String var3 = null;
         if (var0 == null) {
-            var3 = pathPrefix + var1 + "/file/";
+            var3 = pathPrefix + var1 + filePathName;
         } else {
-            var3 = pathPrefix + var0 + "/" + var1 + "/file/";
+            var3 = pathPrefix + var0 + "/" + var1 + filePathName;
         }
 
         return new File(getStorageDir(var2), var3);
@@ -154,9 +154,9 @@ public class PathUtil {
     private static File generateVideoPath(String var0, String var1, Context var2) {
         String var3 = null;
         if (var0 == null) {
-            var3 = pathPrefix + var1 + "/video/";
+            var3 = pathPrefix + var1 + videoPathName;
         } else {
-            var3 = pathPrefix + var0 + "/" + var1 + "/video/";
+            var3 = pathPrefix + var0 + "/" + var1 + videoPathName;
         }
 
         return new File(getStorageDir(var2), var3);
@@ -165,9 +165,9 @@ public class PathUtil {
     private static File generateHistoryPath(String var0, String var1, Context var2) {
         String var3 = null;
         if (var0 == null) {
-            var3 = pathPrefix + var1 + "/chat/";
+            var3 = pathPrefix + var1 + historyPathName;
         } else {
-            var3 = pathPrefix + var0 + "/" + var1 + "/chat/";
+            var3 = pathPrefix + var0 + "/" + var1 + historyPathName;
         }
 
         return new File(getStorageDir(var2), var3);

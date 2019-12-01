@@ -112,22 +112,22 @@ public class MessageDao {
                         content = msg.getContent();
                         break;
                     case Image:
-                        content ="[图片]";
+                        content = "[图片]";
                         break;
                     case Video:
-                        content ="[视频]";
+                        content = "[视频]";
                         break;
                     case Voice:
-                        content ="[语音]";
+                        content = "[语音]";
                         break;
                     case Link:
-                        content ="[链接]";
+                        content = "[链接]";
                         break;
                     case File:
-                        content ="[文件]";
+                        content = "[文件]";
                         break;
                 }
-                sql += " last_msg='" + content+ "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
+                sql += " last_msg='" + content + "',last_msg_time='" + msg.getSendTime() + "' where id=" + msg.getChatId();
                 Log.d(Tag, "the sql is:" + sql);
                 db.execSQL(sql);
 //                Log.d(Tag, "the update chat_list");
@@ -147,7 +147,7 @@ public class MessageDao {
             }
             cursor.close();
         }
-//        Log.d(Tag, "the chat_list id is:" + id);
+
         Msg msg = new Msg();
         msg.setSendTime(info.ReceiveTime);
         msg.setType(info.Type);

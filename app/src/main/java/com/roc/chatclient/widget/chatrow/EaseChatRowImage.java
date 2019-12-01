@@ -3,6 +3,7 @@ package com.roc.chatclient.widget.chatrow;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -46,28 +47,10 @@ public class EaseChatRowImage extends EaseChatRowFile {
 
     @Override
     protected void onSetUpView() {
-//        imgBody = (EMImageMessageBody) message.getBody();
-//         received messages
         if (fileInfo == null) {
             return;
         }
-        if (!isSendMsg()) {
-            progressBar.setVisibility(View.GONE);
-            percentageView.setVisibility(View.GONE);
-            imageView.setImageResource(R.drawable.ease_default_image);
-            String thumbPath = fileInfo.getThumbPath();
-            if (!new File(thumbPath).exists()) {
-                // to make it compatible with thumbnail received in previous version
-                thumbPath = ImageUtils.getThumbnailImagePath(fileInfo.getPath());
-            }
-            showImageView(thumbPath, imageView, fileInfo.getPath(), message);
-
-            return;
-        }
-
-        String filePath = fileInfo.getPath();
-        String thumbPath = fileInfo.getThumbPath();
-        showImageView(thumbPath, imageView, filePath, message);
+        setImageView(imageView, fileInfo.getThumbPath());
         handleSendMessage();
     }
 
@@ -104,6 +87,19 @@ public class EaseChatRowImage extends EaseChatRowFile {
 
     }
 
+    private void setImageView(ImageView imageView, String key) {
+        if (imageView == null) return;
+        Bitmap bitmap = EaseImageCache.getInstance().get(key);
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            bitmap = BitmapFactory.decodeFile(key);
+            if (bitmap == null) return;
+            EaseImageCache.getInstance().put(key, bitmap);
+            imageView.setImageBitmap(bitmap);
+        }
+    }
+
     /**
      * load image into image view
      *
@@ -114,6 +110,7 @@ public class EaseChatRowImage extends EaseChatRowFile {
      */
     private boolean showImageView(final String thumbernailPath, final ImageView iv, final String localFullSizePath, final Msg message) {
         // first check if the thumbnail image already loaded into cache
+        Log.d("aaa", "the thumbernail Path is:" + thumbernailPath);
         Bitmap bitmap = EaseImageCache.getInstance().get(thumbernailPath);
         if (bitmap != null) {
             // thumbnail image is already loaded, reuse the drawable
@@ -121,7 +118,6 @@ public class EaseChatRowImage extends EaseChatRowFile {
             return true;
         } else {
             new AsyncTask<Object, Void, Bitmap>() {
-
                 int width = ImageUtils.ThumbWidth;
                 int height = ImageUtils.ThumbHeight;
 

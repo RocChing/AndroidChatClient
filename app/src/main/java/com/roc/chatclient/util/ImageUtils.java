@@ -109,6 +109,7 @@ public class ImageUtils {
             FileOutputStream outputStream = new FileOutputStream(newFile);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
             outputStream.flush();
+//            EaseImageCache.getInstance().put(newFile.getAbsolutePath(), bitmap);
             return newFile.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
