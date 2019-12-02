@@ -2,6 +2,7 @@ package com.roc.chatclient;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.util.Log;
 
 import com.roc.chatclient.model.ChatHelper;
@@ -16,6 +17,11 @@ public class ChatApplication extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
+        //解决拍照问题
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        builder.detectFileUriExposure();
 
         Intent intent = new Intent(this, MsgService.class);
         startService(intent);

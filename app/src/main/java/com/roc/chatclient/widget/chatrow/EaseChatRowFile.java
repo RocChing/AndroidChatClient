@@ -64,16 +64,18 @@ public class EaseChatRowFile extends EaseChatRow {
     protected void onSetUpView() {
 //        fileMessageBody = (EMNormalFileMessageBody) message.getBody();
         String filePath = fileInfo.getPath(); //fileMessageBody.getLocalUrl();
-        fileNameView.setText(fileInfo.getName());
-        fileSizeView.setText(fileInfo.getStringSize());
+        if (fileNameView != null) fileNameView.setText(fileInfo.getName());
+        if (fileSizeView != null) fileSizeView.setText(fileInfo.getStringSize());
         if (!isSendMsg()) {
-            File file = new File(filePath);
-            if (file != null && file.exists()) {
-                fileStateView.setText(R.string.Have_downloaded);
-            } else {
-                fileStateView.setText(R.string.Did_not_download);
+            if (fileStateView != null) {
+                File file = new File(filePath);
+                if (file != null && file.exists()) {
+                    fileStateView.setText(R.string.Have_downloaded);
+                } else {
+                    fileStateView.setText(R.string.Did_not_download);
+                }
+                return;
             }
-            return;
         }
 
         // until here, to sending message

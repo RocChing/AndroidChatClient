@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="13dp" >
+    android:paddingTop="13dp">
 
     <TextView
         android:id="@+id/timestamp"
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_chat_activity"
-        android:paddingRight="20dp" >
+        android:paddingRight="20dp">
 
         <ImageView
             android:id="@+id/iv_userhead"
@@ -28,16 +28,6 @@
             android:background="@drawable/ease_default_avatar"
             android:scaleType="fitXY" />
 
-        <TextView
-            android:id="@+id/tv_userid"
-            style="@style/chat_text_name_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/chat_nick_margin_left"
-            android:textSize="@dimen/chat_nick_text_size"
-            android:layout_toRightOf="@id/iv_userhead"
-            android:visibility="gone" />
-
         <LinearLayout
             android:id="@+id/bubble"
             android:layout_width="match_parent"
@@ -45,14 +35,13 @@
             android:layout_marginLeft="@dimen/margin_chat_activity"
             android:layout_toLeftOf="@+id/progress_bar"
             android:layout_toRightOf="@id/iv_userhead"
-            android:layout_below="@+id/tv_userid"
-            android:background="@drawable/ease_chatfrom_bg" >
+            android:background="@drawable/ease_chatfrom_bg">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:src="@drawable/ease_chat_item_file" />
+<!--            <ImageView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="5dp"-->
+<!--                android:src="@drawable/ease_chat_item_file" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,22 +49,22 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="7dp"
                 android:gravity="center_vertical"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
                     android:textColor="#000"
                     android:textSize="15sp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp" >
+                    android:layout_marginTop="3dp">
 
                     <TextView
                         android:id="@+id/tv_file_size"

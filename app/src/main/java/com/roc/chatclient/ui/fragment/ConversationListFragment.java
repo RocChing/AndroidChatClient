@@ -56,11 +56,11 @@ public class ConversationListFragment extends EaseConversationListFragment {
                     switch (type) {
                         case File:
                             file = pathUtil.getFilePath();
-                            msgJson = getFileInfoJson(file, receiveMsgInfo);
+                            msgJson = getFileInfoJson(file, false, receiveMsgInfo);
                             break;
                         case Image:
                             file = pathUtil.getImagePath();
-                            msgJson = getFileInfoJson(file, receiveMsgInfo);
+                            msgJson = getFileInfoJson(file, true, receiveMsgInfo);
                             break;
                         default:
                             msgJson = receiveMsgInfo.Msg;
@@ -158,7 +158,7 @@ public class ConversationListFragment extends EaseConversationListFragment {
         }
     }
 
-    private String getFileInfoJson(File file, ReceiveMsgInfo info) {
+    private String getFileInfoJson(File filePath, boolean isImage, ReceiveMsgInfo info) {
         String json = "";
         try {
             FileInfo oldFile = JSON.parseObject(info.Msg, FileInfo.class);
@@ -166,13 +166,12 @@ public class ConversationListFragment extends EaseConversationListFragment {
 
             byte[] bytes = info.MsgOfBytes;
             if (bytes == null || bytes.length < 1) return json;
-            File imageFile = FileUtils.saveFile(file.getAbsolutePath(), oldFile.getName(), bytes);
-            if (imageFile == null) return json;
+            File newFile = FileUtils.saveFile(filePath.getAbsolutePath(), oldFile.getName(), bytes);
+            if (newFile == null) return json;
+//            Log.d(Tag, "the path is:" + file.getAbsolutePath());
 
-            Log.d(Tag, "the path is:" + file.getAbsolutePath());
-
-            String thumbPath = ImageUtils.saveThumbImage(imageFile, ImageUtils.ThumbWidth, ImageUtils.ThumbHeight);
-            FileInfo fileInfo = new FileInfo(imageFile, thumbPath);
+            String thumbPath = isImage ? ImageUtils.saveThumbImage(newFile, ImageUtils.ThumbWidth, ImageUtils.ThumbHeight) : "";
+            FileInfo fileInfo = new FileInfo(newFile, thumbPath);
             json = JSON.toJSONString(fileInfo);
             Log.d(Tag, "the json value is:" + json);
             return json;

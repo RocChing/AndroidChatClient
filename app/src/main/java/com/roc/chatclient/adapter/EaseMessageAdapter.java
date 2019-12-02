@@ -30,6 +30,7 @@ import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.widget.EaseChatMessageList;
 import com.roc.chatclient.widget.EaseChatMessageList.MessageListItemClickListener;
 import com.roc.chatclient.widget.chatrow.EaseChatRow;
+import com.roc.chatclient.widget.chatrow.EaseChatRowFile;
 import com.roc.chatclient.widget.chatrow.EaseChatRowImage;
 import com.roc.chatclient.widget.chatrow.EaseChatRowText;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
@@ -255,9 +256,9 @@ public class EaseMessageAdapter extends BaseAdapter {
 //            case LOCATION:
 //                chatRow = new EaseChatRowLocation(context, message, position, this);
 //                break;
-//            case FILE:
-//                chatRow = new EaseChatRowFile(context, message, position, this);
-//                break;
+            case File:
+                chatRow = new EaseChatRowFile(context, message, position, this);
+                break;
             case Image:
                 chatRow = new EaseChatRowImage(context, message, position, this);
                 break;

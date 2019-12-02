@@ -31,7 +31,7 @@ public class FileInfo {
     public String getStringSize() {
         BigDecimal bd = new BigDecimal(size);
         double f1 = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        return f1 + "";
+        return f1 + " KB";
     }
 
     public String getName() {

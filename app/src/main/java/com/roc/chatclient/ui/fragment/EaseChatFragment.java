@@ -436,11 +436,11 @@ public class EaseChatFragment extends EaseBaseFragment {
 
         @Override
         public void onClick(int itemId, View view) {
-//            if (chatFragmentHelper != null) {
-//                if (chatFragmentHelper.onExtendMenuItemClick(itemId, view)) {
-//                    return;
-//                }
-//            }
+            if (chatFragmentHelper != null) {
+                if (chatFragmentHelper.onExtendMenuItemClick(itemId, view)) {
+                    return;
+                }
+            }
             switch (itemId) {
                 case ITEM_TAKE_PICTURE:
                     selectPicFromCamera();
@@ -467,7 +467,6 @@ public class EaseChatFragment extends EaseBaseFragment {
         }
 
         String fileName = chatHelper.getCurrentUserName() + "_" + System.currentTimeMillis() + ".jpg";
-
         try {
             cameraFile = new File(PathUtil.getInstance().getImagePath(), fileName);
             cameraFile.getParentFile().mkdirs();
@@ -519,6 +518,59 @@ public class EaseChatFragment extends EaseBaseFragment {
 //                }
             }
         }
+    }
+
+    /**
+     * send file
+     *
+     * @param uri
+     */
+    protected void sendFileByUri(Uri uri) {
+        String filePath = null;
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            String[] filePathColumn = {MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.TITLE, MediaStore.Files.FileColumns.DATA};
+            Cursor cursor = null;
+            try {
+                cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA);
+                if (cursor.moveToFirst()) {
+                    filePath = cursor.getString(column_index);
+                }
+                cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            filePath = uri.getPath();
+        }
+        File file = new File(filePath);
+        if (file == null || !file.exists()) {
+            Toast.makeText(getActivity(), R.string.File_does_not_exist, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        //limit the size < 10M
+        if (file.length() > 10 * 1024 * 1024) {
+            Toast.makeText(getActivity(), R.string.The_file_is_not_greater_than_10_m, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        sendFileMessage(filePath);
+    }
+
+    protected void sendFileMessage(String path) {
+        File oldFile = new File(path);
+        byte[] bytes = FileUtils.File2Bytes(oldFile);
+
+        File filePath = PathUtil.getInstance().getFilePath();
+        File newFile = FileUtils.saveFile(filePath.getAbsolutePath(), oldFile.getName(), bytes);
+        if (newFile == null) {
+            return;
+        }
+
+        FileInfo fileInfo = new FileInfo(newFile, "");
+
+        MsgInfo info = new MsgInfo(JSON.toJSONString(fileInfo), MsgType.File, currentUserId, toId, MsgToType.User, bytes);
+        sendMsg(info);
     }
 
     protected void sendImageMessage(String path) {
