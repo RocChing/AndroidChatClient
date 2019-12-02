@@ -537,8 +537,8 @@ public class EaseChatFragment extends EaseBaseFragment {
         FileInfo fileInfo = new FileInfo(imageFile, thumbPath);
         String json = JSON.toJSONString(fileInfo);
 
-        MsgInfo info = new MsgInfo(json, MsgType.Image, currentUserId, toId, MsgToType.User);
-        info.MsgBase64 = CommonUtils.encodeBase64(bytes);
+        MsgInfo info = new MsgInfo(json, MsgType.Image, currentUserId, toId, MsgToType.User, bytes);
+        //info.MsgBase64 = CommonUtils.encodeBase64(bytes);
         sendMsg(info);
     }
 

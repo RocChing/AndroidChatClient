@@ -16,6 +16,11 @@ import com.roc.chatclient.util.StringUtils;
 public abstract class BaseClient {
 
     protected String Tag = "BaseClient";
+
+    protected int maxSize = 30;
+
+    protected int newMsgFlag = 78;//字符串 N
+
     //读队列
     public MessageReadQueen mReadMessageQueen = new MessageReadQueen();
 

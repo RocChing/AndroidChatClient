@@ -47,6 +47,59 @@ public final class CommonUtils {
         return Base64.decode(str, Base64.DEFAULT);
     }
 
+
+    /**
+     * int到byte[] 由高位到低位
+     *
+     * @param a 需要转换为byte数组的整行值。
+     * @return byte数组
+     */
+    public static byte[] intToByteArray(int a) {
+        byte[] bs = new byte[4];
+        for (int i = 0; i < bs.length; i++) {
+            bs[i] = (byte) (a % 255);
+            a = a / 255;
+        }
+        return bs;
+    }
+
+    public static int byteArrayToInt2(byte[] b) {
+        return b[0] & 0xFF |
+                (b[1] & 0xFF) << 8 |
+                (b[2] & 0xFF) << 16 |
+                (b[3] & 0xFF) << 24;
+    }
+
+    /**
+     * byte[]转int
+     *
+     * @param bytes 需要转换成int的数组
+     * @return int值
+     */
+    public static int byteArrayToInt(byte[] bytes) {
+        int a = 0;
+        int length = bytes.length;
+        for (int i = 0; i < length; i++) {
+            a += bytes[i] * Math.pow(255, length - i - 1);
+        }
+        return a;
+    }
+
+    public static byte[] byteMergerAll(byte[]... values) {
+        int length_byte = 0;
+        for (int i = 0; i < values.length; i++) {
+            length_byte += values[i].length;
+        }
+        byte[] all_byte = new byte[length_byte];
+        int countLength = 0;
+        for (int i = 0; i < values.length; i++) {
+            byte[] b = values[i];
+            System.arraycopy(b, 0, all_byte, countLength, b.length);
+            countLength += b.length;
+        }
+        return all_byte;
+    }
+
     /**
      * set initial letter of according user's nickname( username if no nickname)
      *

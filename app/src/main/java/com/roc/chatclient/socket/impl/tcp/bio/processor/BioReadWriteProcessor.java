@@ -1,5 +1,7 @@
 package com.roc.chatclient.socket.impl.tcp.bio.processor;
 
+import android.util.Log;
+
 import com.roc.chatclient.socket.impl.tcp.bio.BioConnectListener;
 import com.roc.chatclient.socket.structures.BaseClient;
 
@@ -20,30 +22,30 @@ public class BioReadWriteProcessor {
 
     private static int G_SOCKET_ID = 0;
 
-    private int     mSocketId;
-    private String  mIp             = "192.168.1.1";
-    private int     mPort           = 9999;
-    private long    connect_timeout = 10000;
+    private int mSocketId;
+    private String mIp = "192.168.1.1";
+    private int mPort = 9999;
+    private long connect_timeout = 10000;
 
     private BaseClient mClient;
     private BioConnectListener mConnectStatusListener;
 
     //------------------------------------------------------------------------------------------
-    private Socket mSocket =null;
-    private OutputStream mOutputStream =null;
-    private InputStream mInputStream =null;
+    private Socket mSocket = null;
+    private OutputStream mOutputStream = null;
+    private InputStream mInputStream = null;
 
     private ConnectRunnable mConnectProcessor;
     private WriteRunnable mWriteProcessor;
     private ReadRunnable mReadProcessor;
 
-    private Thread mConnectThread =null;
-    private Thread mWriteThread =null;
-    private Thread mReadThread =null;
+    private Thread mConnectThread = null;
+    private Thread mWriteThread = null;
+    private Thread mReadThread = null;
 
     private int r_w_count = 2;//读写线程是否都退出了
 
-    public BioReadWriteProcessor(String mIp, int mPort, long   connect_timeout, BaseClient mClient, BioConnectListener mConnectionStatusListener) {
+    public BioReadWriteProcessor(String mIp, int mPort, long connect_timeout, BaseClient mClient, BioConnectListener mConnectionStatusListener) {
         G_SOCKET_ID++;
 
         this.mSocketId = G_SOCKET_ID;
@@ -55,119 +57,118 @@ public class BioReadWriteProcessor {
     }
 
     //------------------------------------------------------------------------------------------
-    public void start(){
+    public void start() {
         mConnectProcessor = new ConnectRunnable();
         mConnectThread = new Thread(mConnectProcessor);
         mConnectThread.start();
     }
 
-    public synchronized void close(){
+    public synchronized void close() {
 
         wakeUp();
 
         try {
-            if(null!= mOutputStream) {
+            if (null != mOutputStream) {
                 mOutputStream.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            mOutputStream =null;
+        } finally {
+            mOutputStream = null;
         }
 
         try {
-            if(null!= mInputStream) {
+            if (null != mInputStream) {
                 mInputStream.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            mInputStream =null;
+        } finally {
+            mInputStream = null;
         }
 
         try {
-            if(null!= mSocket) {
+            if (null != mSocket) {
                 mSocket.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            mSocket =null;
+        } finally {
+            mSocket = null;
         }
 
         try {
-            if(null!= mWriteThread && mWriteThread.isAlive()) {
+            if (null != mWriteThread && mWriteThread.isAlive()) {
                 mWriteThread.interrupt();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            mWriteThread =null;
+        } finally {
+            mWriteThread = null;
         }
 
         try {
-            if(null!= mReadThread && mReadThread.isAlive()) {
+            if (null != mReadThread && mReadThread.isAlive()) {
                 mReadThread.interrupt();
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }finally{
-            mReadThread =null;
+        } finally {
+            mReadThread = null;
         }
     }
 
-    public void wakeUp(){
-        if(null != mWriteProcessor){
+    public void wakeUp() {
+        if (null != mWriteProcessor) {
             mWriteProcessor.wakeup();
         }
     }
 
-    public synchronized void onSocketExit(int exit_code){
+    public synchronized void onSocketExit(int exit_code) {
 
         --r_w_count;
         boolean isWriterReaderExit = (r_w_count <= 0);
-        System.out.println(TAG + "onSocketExit mSocketId " + mSocketId + " exit_code " + exit_code + (exit_code == 1 ? " onWrite" : " onRead")+ " isWriterReaderExit " + isWriterReaderExit);
+        System.out.println(TAG + "onSocketExit mSocketId " + mSocketId + " exit_code " + exit_code + (exit_code == 1 ? " onWrite" : " onRead") + " isWriterReaderExit " + isWriterReaderExit);
         close();
-        if(isWriterReaderExit){
-            if(null != mConnectStatusListener){
+        if (isWriterReaderExit) {
+            if (null != mConnectStatusListener) {
                 mConnectStatusListener.onConnectFailed(BioReadWriteProcessor.this);
             }
         }
     }
 
     //-------------------------------------------------------------------------------------------
-    private class ConnectRunnable implements Runnable{
+    private class ConnectRunnable implements Runnable {
 
         @Override
         public void run() {
             boolean connectRet = false;
             try {
-
-                mSocket  =new Socket();
+                mSocket = new Socket();
                 mSocket.connect(new InetSocketAddress(mIp, mPort), (int) connect_timeout);
 
-                mOutputStream 	= mSocket.getOutputStream();
-                mInputStream 	= mSocket.getInputStream();
+                mOutputStream = mSocket.getOutputStream();
+                mInputStream = mSocket.getInputStream();
 
                 mWriteProcessor = new WriteRunnable();
                 mReadProcessor = new ReadRunnable();
 
-                mWriteThread =new Thread(mWriteProcessor);
-                mReadThread =new Thread(mReadProcessor);
+                mWriteThread = new Thread(mWriteProcessor);
+                mReadThread = new Thread(mReadProcessor);
 
                 mWriteThread.start();
                 mReadThread.start();
 
-                if(null != mConnectStatusListener){
-                    mConnectStatusListener.onConnectSuccess(BioReadWriteProcessor.this,mOutputStream,mInputStream);
+                if (null != mConnectStatusListener) {
+                    mConnectStatusListener.onConnectSuccess(BioReadWriteProcessor.this, mOutputStream, mInputStream);
                 }
                 connectRet = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            if(!connectRet){
-                if(null != mConnectStatusListener){
+            if (!connectRet) {
+                if (null != mConnectStatusListener) {
                     mConnectStatusListener.onConnectFailed(BioReadWriteProcessor.this);
                 }
             }
@@ -176,9 +177,9 @@ public class BioReadWriteProcessor {
 
     private class WriteRunnable implements Runnable {
 
-        private final Object lock=new Object();
+        private final Object lock = new Object();
 
-        public void wakeup(){
+        public void wakeup() {
             synchronized (lock) {
                 lock.notifyAll();
             }
@@ -186,15 +187,15 @@ public class BioReadWriteProcessor {
 
         public void run() {
             try {
-                while(true) {
-                    if(!mClient.onWrite()){
+                while (true) {
+                    if (!mClient.onWrite()) {
                         break;
                     }
                     synchronized (lock) {
                         lock.wait();
                     }
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -202,11 +203,12 @@ public class BioReadWriteProcessor {
         }
     }
 
-    private class ReadRunnable implements Runnable{
+    private class ReadRunnable implements Runnable {
 
         public void run() {
+            Log.d(TAG, "begin run");
             mClient.onRead();
-
+            Log.d(TAG, "end run");
             onSocketExit(2);
         }
     }

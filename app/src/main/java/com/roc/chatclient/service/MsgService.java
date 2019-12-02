@@ -23,10 +23,15 @@ import com.roc.chatclient.socket.structures.BaseMessageProcessor;
 import com.roc.chatclient.socket.structures.IConnectListener;
 import com.roc.chatclient.socket.structures.TcpAddress;
 import com.roc.chatclient.socket.structures.message.Message;
+import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.StringUtils;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -93,37 +98,55 @@ public class MsgService extends Service {
     public void sendMsg(String json) {
         Log.d(Tag, "sendMsg:" + json);
         if (StringUtils.isEmpty(json)) return;
-        json += "\r\n";
 
-        messageProcessor.send(client, json.getBytes());
+        messageProcessor.send(client, getMsgBytes(json));
     }
 
     public void sendMsg(CmdInfo info) {
         String json = JSON.toJSONString(info);
         Log.d(Tag, "sendMsg:" + json);
-        json += "\r\n";
 
-        messageProcessor.send(client, json.getBytes());
+        messageProcessor.send(client, getMsgBytes(json));
+    }
+
+    private byte[] getMsgBytes(String msg) {
+        byte[] bytes1 = "N".getBytes();
+        byte[] bytes2 = msg.getBytes();
+        int length = bytes2.length;
+        byte[] bytes3 = CommonUtils.intToByteArray(length);
+        return CommonUtils.byteMergerAll(bytes1, bytes3, bytes2);
     }
 
     private IReceiveData receiveData = new IReceiveData() {
         @Override
         public void HandleMsg(Message msg) {
             String json = new String(msg.data, msg.offset, msg.length);
-
             Log.d(Tag, "receiveMsg:" + json);
 
-            Intent intent = new Intent();
-            intent.setAction(MsgString.ReceiveMsg);
-            intent.putExtra(MsgString.Default_Args, json);
-            LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+            return;
+
+//            Intent intent = new Intent();
+//            intent.setAction(MsgString.ReceiveMsg);
+//            intent.putExtra(MsgString.Default_Args, json);
+//            LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
         }
     };
 
     private BaseMessageProcessor messageProcessor = new BaseMessageProcessor() {
         @Override
         public void onReceiveMessages(BaseClient mClient, LinkedList<Message> mQueen) {
+            Log.d(Tag, "onReceiveMessages");
+            StringBuilder sb = new StringBuilder(100);
+            for (Message msg : mQueen) {
+                sb.append(new String(msg.data, msg.offset, msg.length));
+            }
+            String json = sb.toString();
+            Log.d(Tag, "the json is:" + sb.toString());
 
+            Intent intent = new Intent();
+            intent.setAction(MsgString.ReceiveMsg);
+            intent.putExtra(MsgString.Default_Args, json);
+            LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
         }
     };
 

@@ -1,5 +1,7 @@
 package com.roc.chatclient.socket.impl.tcp.bio;
 
+import android.util.Log;
+
 import com.roc.chatclient.socket.GClient;
 import com.roc.chatclient.socket.impl.tcp.IReceiveData;
 import com.roc.chatclient.socket.structures.BaseClient;
@@ -7,6 +9,7 @@ import com.roc.chatclient.socket.structures.BaseMessageProcessor;
 import com.roc.chatclient.socket.structures.IConnectListener;
 import com.roc.chatclient.socket.structures.TcpAddress;
 import com.roc.chatclient.socket.structures.message.Message;
+import com.roc.chatclient.util.CommonUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,14 +71,14 @@ public class BioClient extends BaseClient {
         this.mInputStream = mInputStream;
     }
 
-    @Override
-    public void onReceiveData(byte[] src, int offset, int length) {
-        Message msg = mReadMessageQueen.build(src, offset, length);
-        mReadMessageQueen.add(msg);
-        if (receiveData != null) {
-            receiveData.HandleMsg(msg);
-        }
-    }
+//    @Override
+//    public void onReceiveData(byte[] src, int offset, int length) {
+//        Message msg = mReadMessageQueen.build(src, offset, length);
+//        mReadMessageQueen.add(msg);
+//        if (receiveData != null) {
+//            receiveData.HandleMsg(msg);
+//        }
+//    }
 
     @Override
     public void onCheckConnect() {
@@ -89,18 +92,49 @@ public class BioClient extends BaseClient {
 
     public boolean onRead() {
         boolean readRet = false;
+        boolean flag = null != mMessageProcessor;
         try {
-            int maximum_length = 64 * 1024;
-            byte[] bodyBytes = new byte[maximum_length];
-            int numRead;
+            //int maximum_length = 64 * 1024;
+            byte[] bodyBytes = new byte[maxSize];
 
-            while ((numRead = mInputStream.read(bodyBytes, 0, maximum_length)) > 0) {
-                if (numRead > 0) {
-                    if (null != mMessageProcessor) {
-                        mMessageProcessor.onReceiveData(this, bodyBytes, 0, numRead);
-                        mMessageProcessor.onReceiveDataCompleted(this);
+            while (true) {
+                int numRead = 0;
+                boolean newMsg = false;
+                int msgAllLength = 0;
+
+                Log.d(Tag, "begin receive....");
+                if (!newMsg) {
+                    int firstChar = mInputStream.read();
+                    if (firstChar == newMsgFlag) {
+                        byte[] bytesLength = new byte[4];
+                        mInputStream.read(bytesLength, 0, 4);
+                        msgAllLength = CommonUtils.byteArrayToInt2(bytesLength);
+                        newMsg = true;
                     }
                 }
+                Log.d(Tag, "the msgAllLength value is:" + msgAllLength);
+
+                if (!newMsg || msgAllLength < 1) {
+                    newMsg = false;
+                    continue;
+                }
+
+                int read = 0;
+                while ((read = mInputStream.read(bodyBytes, 0, maxSize)) > 0) {
+                    Log.d(Tag, "the read value is:" + read);
+                    if (read > 0) {
+                        numRead += read;
+                        mMessageProcessor.onReceiveData(this, bodyBytes, 0, read);
+                        if (msgAllLength > numRead) {
+                            continue;
+                        }
+                        Log.d(Tag, "the numRead value is:" + numRead);
+                        mMessageProcessor.onReceiveDataCompleted(this);
+                        break;
+                    }
+                    continue;
+                }
+                Thread.sleep(100);
             }
         } catch (SocketException e) {
             e.printStackTrace();//客户端主动socket.stopConnect()会调用这里 java.net.SocketException: Socket closed
@@ -113,10 +147,11 @@ public class BioClient extends BaseClient {
             readRet = false;
         }
 
-        if (null != mMessageProcessor) {
+        if (flag) {
             mMessageProcessor.onReceiveDataCompleted(this);
         }
 
+        Log.d(Tag, "end");
         //退出客户端的时候需要把要该客户端要写出去的数据清空
         if (!readRet) {
             Message msg = pollWriteMessage();
