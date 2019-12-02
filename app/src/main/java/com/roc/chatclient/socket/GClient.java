@@ -11,12 +11,12 @@ import com.roc.chatclient.socket.structures.pools.MessagePool;
 
 public final class GClient {
 
-    private static boolean isInitialized  = false;
+    private static boolean isInitialized = false;
 
-    public static final void init(){
-        if(!isInitialized){
-            MessagePool.init(6);
-            MessageBuffer.init(8 * MessageBuffer.KB, 64*MessageBuffer.KB, 1* MessageBuffer.MB, 5 , 2 , 0, 2);
+    public static final void init() {
+        if (!isInitialized) {
+            MessagePool.init(10);
+            MessageBuffer.init(8 * MessageBuffer.KB, 100 * MessageBuffer.KB, 2 * MessageBuffer.MB, 5, 2, 1, 2);
             isInitialized = true;
         }
     }

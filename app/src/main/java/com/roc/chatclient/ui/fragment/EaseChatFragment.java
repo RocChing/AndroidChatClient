@@ -391,7 +391,6 @@ public class EaseChatFragment extends EaseBaseFragment {
                 }
                 return false;
             }
-
         });
     }
 

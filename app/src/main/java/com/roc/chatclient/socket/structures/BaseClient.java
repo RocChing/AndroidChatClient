@@ -58,7 +58,6 @@ public abstract class BaseClient {
 
     //--------------------------------------------------------------------------------------
     public void onSendMessage(byte[] src, int offset, int length) {
-        Log.d(Tag, "the msg length is:" + length);
         Message msg = mWriteMessageQueen.build(src, offset, length);
         mWriteMessageQueen.add(msg);
         onCheckConnect();

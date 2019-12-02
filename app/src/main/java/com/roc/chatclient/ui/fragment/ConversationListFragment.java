@@ -66,7 +66,7 @@ public class ConversationListFragment extends EaseConversationListFragment {
                             msgJson = receiveMsgInfo.Msg;
                             break;
                     }
-
+                    receiveMsgInfo.Msg = msgJson;
                     Msg msg = chatHelper.saveMsg(receiveMsgInfo);
                     handler.sendEmptyMessage(2);
                     chatHelper.sendMsg(msg, json);
@@ -169,9 +169,12 @@ public class ConversationListFragment extends EaseConversationListFragment {
             File imageFile = FileUtils.saveFile(file.getAbsolutePath(), oldFile.getName(), bytes);
             if (imageFile == null) return json;
 
+            Log.d(Tag, "the path is:" + file.getAbsolutePath());
+
             String thumbPath = ImageUtils.saveThumbImage(imageFile, ImageUtils.ThumbWidth, ImageUtils.ThumbHeight);
             FileInfo fileInfo = new FileInfo(imageFile, thumbPath);
             json = JSON.toJSONString(fileInfo);
+            Log.d(Tag, "the json value is:" + json);
             return json;
         } catch (Exception e) {
             e.printStackTrace();

@@ -51,16 +51,16 @@ public final class CommonUtils {
     /**
      * int到byte[] 由高位到低位
      *
-     * @param a 需要转换为byte数组的整行值。
+     * @param val 需要转换为byte数组的整行值。
      * @return byte数组
      */
-    public static byte[] intToByteArray(int a) {
-        byte[] bs = new byte[4];
-        for (int i = 0; i < bs.length; i++) {
-            bs[i] = (byte) (a % 255);
-            a = a / 255;
-        }
-        return bs;
+    public static byte[] intToByteArray(int val) {
+        byte[] b = new byte[4];
+        b[0] = (byte) (val & 0xff);
+        b[1] = (byte) ((val >> 8) & 0xff);
+        b[2] = (byte) ((val >> 16) & 0xff);
+        b[3] = (byte) ((val >> 24) & 0xff);
+        return b;
     }
 
     public static int byteArrayToInt2(byte[] b) {

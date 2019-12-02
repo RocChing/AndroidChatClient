@@ -114,6 +114,10 @@ public class MsgService extends Service {
         byte[] bytes2 = msg.getBytes();
         int length = bytes2.length;
         byte[] bytes3 = CommonUtils.intToByteArray(length);
+//        Log.d(Tag, "the msg length is:" + length);
+//        for (byte b : bytes3) {
+//            Log.d(Tag, "the byte value is:" + b);
+//        }
         return CommonUtils.byteMergerAll(bytes1, bytes3, bytes2);
     }
 
@@ -135,13 +139,11 @@ public class MsgService extends Service {
     private BaseMessageProcessor messageProcessor = new BaseMessageProcessor() {
         @Override
         public void onReceiveMessages(BaseClient mClient, LinkedList<Message> mQueen) {
-            Log.d(Tag, "onReceiveMessages");
-            StringBuilder sb = new StringBuilder(100);
+            StringBuilder sb = new StringBuilder(1000);
             for (Message msg : mQueen) {
                 sb.append(new String(msg.data, msg.offset, msg.length));
             }
             String json = sb.toString();
-            Log.d(Tag, "the json is:" + sb.toString());
 
             Intent intent = new Intent();
             intent.setAction(MsgString.ReceiveMsg);

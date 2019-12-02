@@ -101,8 +101,7 @@ public class BioClient extends BaseClient {
                 int numRead = 0;
                 boolean newMsg = false;
                 int msgAllLength = 0;
-
-                Log.d(Tag, "begin receive....");
+//                Log.d(Tag, "begin receive....");
                 if (!newMsg) {
                     int firstChar = mInputStream.read();
                     if (firstChar == newMsgFlag) {
@@ -112,8 +111,7 @@ public class BioClient extends BaseClient {
                         newMsg = true;
                     }
                 }
-                Log.d(Tag, "the msgAllLength value is:" + msgAllLength);
-
+//                Log.d(Tag, "the msgAllLength value is:" + msgAllLength);
                 if (!newMsg || msgAllLength < 1) {
                     newMsg = false;
                     continue;
@@ -121,14 +119,14 @@ public class BioClient extends BaseClient {
 
                 int read = 0;
                 while ((read = mInputStream.read(bodyBytes, 0, maxSize)) > 0) {
-                    Log.d(Tag, "the read value is:" + read);
+//                    Log.d(Tag, "the read value is:" + read);
                     if (read > 0) {
                         numRead += read;
                         mMessageProcessor.onReceiveData(this, bodyBytes, 0, read);
                         if (msgAllLength > numRead) {
                             continue;
                         }
-                        Log.d(Tag, "the numRead value is:" + numRead);
+//                        Log.d(Tag, "the numRead value is:" + numRead);
                         mMessageProcessor.onReceiveDataCompleted(this);
                         break;
                     }
