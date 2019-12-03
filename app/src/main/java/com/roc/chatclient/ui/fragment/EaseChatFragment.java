@@ -51,6 +51,7 @@ import com.roc.chatclient.widget.EaseChatExtendMenu;
 import com.roc.chatclient.widget.EaseChatInputMenu;
 import com.roc.chatclient.widget.EaseChatMessageList;
 import com.roc.chatclient.R;
+import com.roc.chatclient.widget.EaseVoiceRecorderView;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
 import java.io.File;
@@ -103,6 +104,8 @@ public class EaseChatFragment extends EaseBaseFragment {
     protected int[] itemIds = {ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION};
     protected MyItemClickListener extendMenuItemClickListener;
 
+    protected EaseVoiceRecorderView voiceRecorderView;
+
     protected List<Msg> msgList;
 
     @Override
@@ -140,6 +143,8 @@ public class EaseChatFragment extends EaseBaseFragment {
     @Override
     protected void initView() {
         // message list layout
+        voiceRecorderView = (EaseVoiceRecorderView) getView().findViewById(R.id.voice_recorder);
+
         messageList = getView().findViewById(R.id.message_list);
         if (chatType != Constant.CHATTYPE_SINGLE)
             messageList.setShowUserNick(true);
@@ -161,14 +166,13 @@ public class EaseChatFragment extends EaseBaseFragment {
 
             @Override
             public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
-//                return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderCallback() {
-//
-//                    @Override
-//                    public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
+                return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderView.EaseVoiceRecorderCallback() {
+
+                    @Override
+                    public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
 //                        sendVoiceMessage(voiceFilePath, voiceTimeLength);
-//                    }
-//                });
-                return false;
+                    }
+                });
             }
 
             @Override

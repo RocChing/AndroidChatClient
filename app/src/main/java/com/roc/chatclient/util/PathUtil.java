@@ -131,7 +131,7 @@ public class PathUtil {
 
     private static File generateVoicePath(String var0, String var1, Context var2) {
         String var3 = null;
-        if (var0 == null) {
+        if (StringUtils.isEmpty(var0)) {
             var3 = pathPrefix + var1 + voicePathName;
         } else {
             var3 = pathPrefix + var0 + "/" + var1 + voicePathName;
