@@ -41,6 +41,7 @@ import com.roc.chatclient.model.MsgToType;
 import com.roc.chatclient.model.MsgType;
 import com.roc.chatclient.model.ReceiveMsgInfo;
 import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.model.VoiceInfo;
 import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.DateUtils;
 import com.roc.chatclient.util.FileUtils;
@@ -170,7 +171,7 @@ public class EaseChatFragment extends EaseBaseFragment {
 
                     @Override
                     public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
-//                        sendVoiceMessage(voiceFilePath, voiceTimeLength);
+                        sendVoiceMessage(voiceFilePath, voiceTimeLength);
                     }
                 });
             }
@@ -596,6 +597,23 @@ public class EaseChatFragment extends EaseBaseFragment {
         //info.MsgBase64 = CommonUtils.encodeBase64(bytes);
         sendMsg(info);
     }
+
+    protected void sendVoiceMessage(String path, int length) {
+        File oldFile = new File(path);
+        byte[] bytes = FileUtils.File2Bytes(oldFile);
+
+        File filePath = PathUtil.getInstance().getFilePath();
+        File newFile = FileUtils.saveFile(filePath.getAbsolutePath(), oldFile.getName(), bytes);
+        if (newFile == null) {
+            return;
+        }
+
+        VoiceInfo voiceInfo = new VoiceInfo(newFile, length);
+
+        MsgInfo info = new MsgInfo(JSON.toJSONString(voiceInfo), MsgType.Voice, currentUserId, toId, MsgToType.User, bytes);
+        sendMsg(info);
+    }
+
 
     public void sendMsg(MsgInfo info) {
         Msg msg = new Msg();

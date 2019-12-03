@@ -26,8 +26,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.Msg;
+import com.roc.chatclient.model.VoiceInfo;
 import com.roc.chatclient.util.PreferenceManager;
 
 /**
@@ -53,6 +55,7 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
 
     private int currentUserId;
 
+    private VoiceInfo voiceInfo;
     public EaseChatRowVoicePlayClickListener(Msg message, ImageView v, ImageView iv_read_status, BaseAdapter adapter, Activity context) {
         this.message = message;
 //		voiceBody = (EMVoiceMessageBody) message.getBody();
@@ -62,6 +65,7 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
         this.activity = context;
         currentUserId = PreferenceManager.getInstance().getCurrentUserId();
 //        this.chatType = message.getChatType();
+
     }
 
     public void stopPlayVoice() {
@@ -165,6 +169,7 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
             }
             this.stopPlayVoice();
         }
+
 
 //        if (!isReceiveMsg()) {
 //            // for sent msg, we will try to play the voice file directly

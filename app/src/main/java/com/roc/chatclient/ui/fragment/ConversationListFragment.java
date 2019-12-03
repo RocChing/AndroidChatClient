@@ -21,6 +21,7 @@ import com.roc.chatclient.model.EMConversation;
 import com.roc.chatclient.model.FileInfo;
 import com.roc.chatclient.model.MsgType;
 import com.roc.chatclient.model.ReceiveMsgInfo;
+import com.roc.chatclient.model.VoiceInfo;
 import com.roc.chatclient.receiver.IMsgCallback;
 import com.roc.chatclient.ui.ChatActivity;
 import com.roc.chatclient.util.CommonUtils;
@@ -32,6 +33,7 @@ import java.io.File;
 
 public class ConversationListFragment extends EaseConversationListFragment {
     private TextView errorText;
+    private PathUtil pathUtil;
 
     @Override
     protected void initView() {
@@ -40,6 +42,8 @@ public class ConversationListFragment extends EaseConversationListFragment {
         errorItemContainer.addView(errorView);
         errorText = errorView.findViewById(R.id.tv_connect_errormsg);
         search_bar_view.setVisibility(View.GONE);
+
+        pathUtil = PathUtil.getInstance();
 
         final ChatHelper chatHelper = ChatHelper.getInstance();
 
@@ -50,23 +54,7 @@ public class ConversationListFragment extends EaseConversationListFragment {
                 MsgType type = MsgType.getType(receiveMsgInfo.Type);
                 String userName = receiveMsgInfo.From.Name;
                 if (chatHelper.isFriendUser(userName)) {
-                    File file = null;
-                    PathUtil pathUtil = PathUtil.getInstance();
-                    String msgJson = "";
-                    switch (type) {
-                        case File:
-                            file = pathUtil.getFilePath();
-                            msgJson = getFileInfoJson(file, false, receiveMsgInfo);
-                            break;
-                        case Image:
-                            file = pathUtil.getImagePath();
-                            msgJson = getFileInfoJson(file, true, receiveMsgInfo);
-                            break;
-                        default:
-                            msgJson = receiveMsgInfo.Msg;
-                            break;
-                    }
-                    receiveMsgInfo.Msg = msgJson;
+                    receiveMsgInfo.Msg = getFileInfoJson(type, receiveMsgInfo);
                     Msg msg = chatHelper.saveMsg(receiveMsgInfo);
                     handler.sendEmptyMessage(2);
                     chatHelper.sendMsg(msg, json);
@@ -158,7 +146,60 @@ public class ConversationListFragment extends EaseConversationListFragment {
         }
     }
 
-    private String getFileInfoJson(File filePath, boolean isImage, ReceiveMsgInfo info) {
+    private String getFileInfoJson(MsgType type, ReceiveMsgInfo info) {
+        String json = "";
+        if (type == MsgType.Text) {
+            json = info.Msg;
+            return json;
+        }
+
+        try {
+            FileInfo oldFile = JSON.parseObject(info.Msg, FileInfo.class);
+            if (oldFile == null) return json;
+
+            File filePath = null;
+            switch (type) {
+                case File:
+                    filePath = pathUtil.getFilePath();
+                    break;
+                case Image:
+                    filePath = pathUtil.getImagePath();
+                    break;
+                case Voice:
+                    filePath = pathUtil.getVoicePath();
+                    break;
+            }
+
+            byte[] bytes = info.MsgOfBytes;
+            if (bytes == null || bytes.length < 1) return json;
+            File newFile = FileUtils.saveFile(filePath.getAbsolutePath(), oldFile.getName(), bytes);
+            if (newFile == null) return json;
+
+            FileInfo fileInfo = null;
+            String thumbPath = "";
+            int length = 0;
+            if (type == MsgType.Image) {
+                thumbPath = ImageUtils.saveThumbImage(newFile, ImageUtils.ThumbWidth, ImageUtils.ThumbHeight);
+            } else if (type == MsgType.Voice) {
+                VoiceInfo voiceInfo = JSON.parseObject(info.Msg, VoiceInfo.class);
+                if (voiceInfo != null) {
+                    length = voiceInfo.Length;
+                }
+            }
+
+            if (type == MsgType.File || type == MsgType.Image) {
+                fileInfo = new FileInfo(newFile, thumbPath);
+            } else if (type == MsgType.Voice) {
+                fileInfo = new VoiceInfo(newFile, length);
+            }
+            json = JSON.toJSONString(fileInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
+    private String getFileInfoJson_old(File filePath, boolean isImage, ReceiveMsgInfo info) {
         String json = "";
         try {
             FileInfo oldFile = JSON.parseObject(info.Msg, FileInfo.class);

@@ -126,7 +126,7 @@ public class EaseVoiceRecorderView extends RelativeLayout {
                     // stop recording and send voice file
                     try {
                         int length = stopRecoding();
-                        if (length > 0) {
+                        if (length > 1) {
                             if (recorderCallback != null) {
                                 recorderCallback.onVoiceRecordComplete(getVoiceFilePath(), length);
                             }

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
+import com.alibaba.fastjson.JSON;
 import com.roc.chatclient.entity.Msg;
+import com.roc.chatclient.model.VoiceInfo;
 
 import java.io.IOException;
 
@@ -54,6 +56,9 @@ public class EaseChatRowVoicePlayer {
     public void play(final Msg msg, final MediaPlayer.OnCompletionListener listener) {
 //        if (!(msg.getBody() instanceof EMVoiceMessageBody)) return;
 
+        VoiceInfo info = JSON.parseObject(msg.getContent(), VoiceInfo.class);
+        if (info == null) return;
+
         if (mediaPlayer.isPlaying()) {
             stop();
         }
@@ -64,7 +69,7 @@ public class EaseChatRowVoicePlayer {
         try {
             setSpeaker();
 //            EMVoiceMessageBody voiceBody = (EMVoiceMessageBody) msg.getBody();
-//            mediaPlayer.setDataSource(voiceBody.getLocalUrl());
+            mediaPlayer.setDataSource(info.getPath());
             mediaPlayer.prepare();
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override

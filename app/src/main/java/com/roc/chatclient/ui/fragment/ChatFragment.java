@@ -58,10 +58,10 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragment.E
             inputMenu.registerExtendMenuItem(R.string.attach_voice_call, R.drawable.chat_tool_audio, ITEM_VOICE_CALL, extendMenuItemClickListener);
             inputMenu.registerExtendMenuItem(R.string.attach_video_call, R.drawable.chat_tool_video, ITEM_VIDEO_CALL, extendMenuItemClickListener);
         }
-        //no red packet in chatroom
-        if (chatType != Constant.CHATTYPE_CHATROOM) {
-            inputMenu.registerExtendMenuItem(R.string.attach_red_packet, R.drawable.em_chat_red_packet_selector, ITEM_RED_PACKET, extendMenuItemClickListener);
-        }
+//        //no red packet in chatroom
+//        if (chatType != Constant.CHATTYPE_CHATROOM) {
+//            inputMenu.registerExtendMenuItem(R.string.attach_red_packet, R.drawable.em_chat_red_packet_selector, ITEM_RED_PACKET, extendMenuItemClickListener);
+//        }
     }
 
 

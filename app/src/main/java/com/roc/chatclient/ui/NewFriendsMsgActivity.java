@@ -68,7 +68,7 @@ public class NewFriendsMsgActivity extends BaseActivity {
         ChatHelper.getInstance().setMsgCallback(new IMsgCallback() {
             @Override
             public void HandleMsg(CmdInfo info, String msg) {
-                Log.d("NewFriend", msg);
+                //Log.d("NewFriend", msg);
                 List<UserExtInfo> list = info.ofList(UserExtInfo.class);
                 contactListLayout.init(list);
             }
