@@ -143,7 +143,7 @@ public class EaseChatFragment extends EaseBaseFragment {
     @Override
     protected void initView() {
         // message list layout
-        voiceRecorderView = (EaseVoiceRecorderView) getView().findViewById(R.id.voice_recorder);
+        voiceRecorderView = getView().findViewById(R.id.voice_recorder);
 
         messageList = getView().findViewById(R.id.message_list);
         if (chatType != Constant.CHATTYPE_SINGLE)

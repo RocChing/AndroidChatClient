@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.roc.chatclient.widget.chatrow.EaseChatRowVoicePlayer;
  * Voice recorder view
  */
 public class EaseVoiceRecorderView extends RelativeLayout {
+    private final String Tag = "EaseVoiceRecorderView";
     protected Context context;
     protected LayoutInflater inflater;
     protected Drawable[] micImages;
@@ -95,6 +97,7 @@ public class EaseVoiceRecorderView extends RelativeLayout {
      * @param event
      */
     public boolean onPressToSpeakBtnTouch(View v, MotionEvent event, EaseVoiceRecorderCallback recorderCallback) {
+        Log.d(Tag, "the event action is:" + event.getAction());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 try {
@@ -165,7 +168,9 @@ public class EaseVoiceRecorderView extends RelativeLayout {
             recordingHint.setText(context.getString(R.string.move_up_to_cancel));
             recordingHint.setBackgroundColor(Color.TRANSPARENT);
             voiceRecorder.startRecording(context);
+            Log.d(Tag, "aaa");
         } catch (Exception e) {
+            Log.d(Tag, "bbb");
             e.printStackTrace();
             if (wakeLock.isHeld())
                 wakeLock.release();
@@ -197,6 +202,7 @@ public class EaseVoiceRecorderView extends RelativeLayout {
                 this.setVisibility(View.INVISIBLE);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
