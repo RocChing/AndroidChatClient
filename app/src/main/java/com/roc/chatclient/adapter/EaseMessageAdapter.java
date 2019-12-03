@@ -33,6 +33,7 @@ import com.roc.chatclient.widget.chatrow.EaseChatRow;
 import com.roc.chatclient.widget.chatrow.EaseChatRowFile;
 import com.roc.chatclient.widget.chatrow.EaseChatRowImage;
 import com.roc.chatclient.widget.chatrow.EaseChatRowText;
+import com.roc.chatclient.widget.chatrow.EaseChatRowVoice;
 import com.roc.chatclient.widget.chatrow.EaseCustomChatRowProvider;
 
 import java.lang.reflect.Array;
@@ -262,9 +263,9 @@ public class EaseMessageAdapter extends BaseAdapter {
             case Image:
                 chatRow = new EaseChatRowImage(context, message, position, this);
                 break;
-//            case VOICE:
-//                chatRow = new EaseChatRowVoice(context, message, position, this);
-//                break;
+            case Voice:
+                chatRow = new EaseChatRowVoice(context, message, position, this);
+                break;
 //            case VIDEO:
 //                chatRow = new EaseChatRowVideo(context, message, position, this);
 //                break;

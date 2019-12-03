@@ -120,7 +120,6 @@ public class EaseChatRowFile extends EaseChatRow {
 //        }
     }
 
-
     @Override
     protected void onUpdateView() {
         adapter.notifyDataSetChanged();
@@ -128,14 +127,16 @@ public class EaseChatRowFile extends EaseChatRow {
 
     @Override
     protected void onBubbleClick() {
-        String filePath = fileInfo.getPath();
-        File file = new File(filePath);
-        if (file != null && file.exists()) {
-            // open files if it exist
-            FileUtils.openFile(file, (Activity) context);
-        } else {
-            // download the file
+        if (fileInfo != null) {
+            String filePath = fileInfo.getPath();
+            File file = new File(filePath);
+            if (file != null && file.exists()) {
+                // open files if it exist
+                FileUtils.openFile(file, (Activity) context);
+            } else {
+                // download the file
 //            context.startActivity(new Intent(context, EaseShowNormalFileActivity.class).putExtra("msgbody", message.getBody()));
+            }
         }
 //        if (message.direct() == EMMessage.Direct.RECEIVE && !message.isAcked() && message.getChatType() == ChatType.Chat) {
 //            try {

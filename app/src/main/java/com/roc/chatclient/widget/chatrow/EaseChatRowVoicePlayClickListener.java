@@ -21,6 +21,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -46,17 +47,18 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
     MediaPlayer mediaPlayer = null;
     ImageView iv_read_status;
     Activity activity;
-//    private ChatType chatType;
+    //    private ChatType chatType;
     private BaseAdapter adapter;
 
     public static boolean isPlaying = false;
-//    public static EaseChatRowVoicePlayClickListener currentPlayListener = null;
+    //    public static EaseChatRowVoicePlayClickListener currentPlayListener = null;
     public static int playMsgId;
 
     private int currentUserId;
 
     private VoiceInfo voiceInfo;
-    public EaseChatRowVoicePlayClickListener(Msg message, ImageView v, ImageView iv_read_status, BaseAdapter adapter, Activity context) {
+
+    public EaseChatRowVoicePlayClickListener(VoiceInfo info, Msg message, ImageView v, ImageView iv_read_status, BaseAdapter adapter, Activity context) {
         this.message = message;
 //		voiceBody = (EMVoiceMessageBody) message.getBody();
         this.iv_read_status = iv_read_status;
@@ -65,7 +67,7 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
         this.activity = context;
         currentUserId = PreferenceManager.getInstance().getCurrentUserId();
 //        this.chatType = message.getChatType();
-
+        this.voiceInfo = info;
     }
 
     public void stopPlayVoice() {
@@ -87,13 +89,14 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
 
     public void playVoice(String filePath) {
         if (!(new File(filePath).exists())) {
+            Log.d(TAG,"the voice file is not exist!");
             return;
         }
         playMsgId = message.getId();
         AudioManager audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
 
         mediaPlayer = new MediaPlayer();
-        if (false) {//EaseUI.getInstance().getSettingsProvider().isSpeakerOpened()
+        if (true) {//EaseUI.getInstance().getSettingsProvider().isSpeakerOpened()
             audioManager.setMode(AudioManager.MODE_NORMAL);
             audioManager.setSpeakerphoneOn(true);
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_RING);
@@ -161,6 +164,10 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        if (voiceInfo == null) {
+            Log.d(TAG,"the voice info is null");
+            return;
+        }
         String st = activity.getResources().getString(R.string.Is_download_voice_click_later);
         if (isPlaying) {
             if (playMsgId > 0 && playMsgId == message.getId()) {
@@ -170,7 +177,7 @@ public class EaseChatRowVoicePlayClickListener implements View.OnClickListener {
             this.stopPlayVoice();
         }
 
-
+        playVoice(voiceInfo.getPath());
 //        if (!isReceiveMsg()) {
 //            // for sent msg, we will try to play the voice file directly
 //            playVoice(voiceBody.getLocalUrl());
