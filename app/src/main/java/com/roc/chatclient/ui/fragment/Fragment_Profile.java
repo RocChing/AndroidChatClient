@@ -15,7 +15,9 @@ import androidx.fragment.app.Fragment;
 import com.roc.chatclient.R;
 import com.roc.chatclient.entity.User;
 import com.roc.chatclient.model.UserExtInfo;
+import com.roc.chatclient.ui.HomeActivity;
 import com.roc.chatclient.ui.SettingActivity;
+import com.roc.chatclient.ui.VideoCallActivity;
 import com.roc.chatclient.util.CommonUtils;
 import com.roc.chatclient.util.PreferenceManager;
 import com.roc.chatclient.util.ResourcesUtils;
@@ -25,6 +27,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Fragment_Profile extends BaseFragment {
 
+    private TextView txt_album;
+
     @Override
     public int getRootLayoutId() {
         return R.layout.fragment_profile;
@@ -32,7 +36,13 @@ public class Fragment_Profile extends BaseFragment {
 
     @Override
     protected void initView(View view) {
-
+        txt_album = view.findViewById(R.id.txt_album);
+        txt_album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoVideo();
+            }
+        });
     }
 
     @Override
@@ -74,7 +84,11 @@ public class Fragment_Profile extends BaseFragment {
         });
     }
 
+    private void gotoVideo() {
+        Intent intent = new Intent(this.getActivity(), VideoCallActivity.class);
 
+        this.startActivity(intent);
+    }
     //    //相册按钮点击事件
 //
 //    public void txt_album_Click() {

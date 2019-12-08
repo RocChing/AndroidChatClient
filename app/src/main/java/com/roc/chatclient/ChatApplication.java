@@ -9,6 +9,8 @@ import com.roc.chatclient.model.ChatHelper;
 import com.roc.chatclient.service.MsgService;
 import com.roc.chatclient.util.FinishActivityManager;
 
+import org.ar.rtmpc_hybrid.ARRtmpcEngine;
+
 public class ChatApplication extends Application {
 
     private static ChatApplication instance;
@@ -27,6 +29,8 @@ public class ChatApplication extends Application {
         startService(intent);
 
         ChatHelper.getInstance().init(this);
+
+        ARRtmpcEngine.Inst().initEngine(getApplicationContext(), "", "");
     }
 
     public static ChatApplication getInstance() {
